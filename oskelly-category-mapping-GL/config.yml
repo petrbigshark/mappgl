@@ -1,0 +1,68 @@
+app:
+  timezone: "Europe/Tallinn"
+
+input:
+  columns:
+    reason: "Reason"
+    category: "Category"
+    parentcategory: "ParentCategory"
+    description: "Description"
+
+filters:
+  brand_exclude_prefixes:
+    - "Не найден бренд с названием"
+  reasons:
+    - "Не найдена категория с названием"
+    - "Для категории 'Юбки миди' не найден тип размера"
+  kids_parent_markers: ["Bambino","Kids","Kid","Boy","Girl","Junior","Children","Child","Teen"]
+  skirts_category_markers: ["юбк","skirt","skirts","gonna","gonne","jupe","falda","saia","rock"]
+
+grouping:
+  men_markers: ["Uomo","Men","Man","Male","Homme","Herr","Herren"]
+  women_markers: ["Donna","Women","Woman","Female","Femme","Damen"]
+  unisex_markers: ["Unisex"]
+  lifestyle_markers: ["Lifestyle","Home","Casa","Maison"]
+  default_group: "WOMEN"
+
+dictionaries:
+  category_xlsx: "data/Справочник category.xlsx"
+  parentcategory_xlsx: "data/Справочник parentcategory.xlsx"
+  seed_csv: "data/seed_expr_to_final.csv"
+  seed_enabled: true
+  seed_confidence_threshold: 0.65
+  seed_conflict_policy: "llm"
+
+mapping:
+  jewelry_prefer_ornaments: true
+  # Fuzzy shortlist is disabled: LLM sees the FULL list of category paths per group.
+  use_full_dictionary_candidates: true
+  depth_fallback_threshold: 2
+  force_desc_markers: ["Other","Другое","Прочее","Misc","Varie","Accessori","Accessories","Abbigliamento","Clothing","Apparel"]
+
+desc_reduction:
+  enabled: true
+  token_score_threshold: 78
+  max_tokens: 6
+
+llm:
+  model: "gpt-5-mini"
+  max_items_per_request: 60
+  request_timeout_sec: 120
+  prompt_version: "catmap-v4-full-dict"
+
+output:
+  columns:
+    - "id"
+    - "objectType"
+    - "expr"
+    - "outputValue"
+    - "matchType"
+    - "repeatMatching"
+    - "params"
+    - "oskellyId"
+    - "indexNumber"
+    - "clientEmail"
+  object_type_value: "CATEGORY"
+  match_type_value: "EQUALS"
+  repeat_matching_value: 'false'
+  dedup_subset: ["expr","outputValue","params"]

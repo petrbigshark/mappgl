@@ -1,0 +1,114 @@
+input:
+  sheet_name: "Result 1"
+  columns:
+    reason: "reason"
+    brand: "brand"
+    parentcategory: "parentcategory"
+    category: "category"
+
+references:
+  clothing_dict_xlsx: "Справочник одежда.xlsx"
+  shoes_dict_xlsx: "Справочник обувь.xlsx"
+
+filters:
+  # ВАЖНО: regexp якорится на начало строки через ^
+  # 1) "Для категории '...' не найден тип размера ..."
+  # 2) "не найден размер ..."
+  reason_start_regex:
+    - "^\\s*Для категории\\s*['\\\"].*?['\\\"]\\s*не найден тип размера"
+    - "^\\s*не найден размер\\b"
+
+  # Пустой список = exclude-only режим:
+  # оставляем любые parentcategory, кроме тех, где есть детские маркеры.
+  include_parent_markers: []
+
+  # Детские значения (исключаем, даже если внутри есть men/women маркеры)
+  exclude_parent_markers:
+    - "Kids"
+    - "Boy"
+    - "Girl"
+    - "Детское"
+    - "Девочки"
+    - "Мальчики"
+
+classification:
+  allowed_labels: ["CLOTHING", "SHOES", "OTHER"]
+  default_label: "OTHER"
+  llm_enabled: true
+  llm_model: "gpt-5-mini"
+  llm_max_retries: 3
+  llm_timeout_sec: 90
+
+  # Heuristic fallback (используется в dry-run и когда LLM недоступен)
+  shoes_keywords:
+    - "sneakers"
+    - "shoes"
+    - "boots"
+    - "sandals"
+    - "loafers"
+    - "mules"
+    - "heels"
+    - "flats"
+    - "footwear"
+    - "кроссов"
+    - "ботин"
+    - "туфл"
+    - "сапог"
+    - "лофер"
+    - "сандал"
+    - "мокас"
+    - "кед"
+    - "обув"
+
+  clothing_keywords:
+    - "abiti"
+    - "dress"
+    - "dresses"
+    - "camicie"
+    - "shirts"
+    - "t-shirt"
+    - "tee"
+    - "polo"
+    - "top"
+    - "pantaloni"
+    - "pants"
+    - "pantaloncini"
+    - "shorts"
+    - "jeans"
+    - "gonne"
+    - "skirts"
+    - "maglie"
+    - "knitwear"
+    - "giacche"
+    - "jackets"
+    - "giacconi"
+    - "coats"
+    - "blazer"
+    - "intimo"
+    - "underwear"
+    - "mare"
+    - "swimwear"
+    - "одеж"
+    - "плать"
+    - "рубаш"
+    - "футбол"
+    - "брюк"
+    - "шорт"
+    - "джинс"
+    - "юбк"
+    - "кофт"
+    - "куртк"
+
+output:
+  outdir: "output"
+  result_filename_template: "Размеры для маппинга {input_stem} {date}.xlsx"
+  category_map_filename: "category_mapping.xlsx"
+  unmatched_brands_filename: "unmatched_brands.xlsx"
+  report_filename: "run_report.json"
+
+  # false = оставляем строки даже если бренд не найден в справочнике
+  keep_only_mapped_size_type: false
+
+  add_columns:
+    size_category: "sizeCategory"
+    size_type_mapped: "sizeTypeMapped"

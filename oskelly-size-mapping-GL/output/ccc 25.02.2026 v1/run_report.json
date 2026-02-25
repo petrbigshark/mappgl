@@ -1,0 +1,44 @@
+{
+  "args": {
+    "input": "ccc.xlsx",
+    "clothing_dict": "/Users/petr/Documents/Automatisation Oskelly/oskelly-size-mapping/Справочник одежда.xlsx",
+    "shoes_dict": "/Users/petr/Documents/Automatisation Oskelly/oskelly-size-mapping/Справочник обувь.xlsx",
+    "sheet_name": "Result 1",
+    "dry_run": false,
+    "disable_llm": false
+  },
+  "run": {
+    "run_dir": "output/ccc 25.02.2026 v1",
+    "date": "25.02.2026",
+    "version": 1,
+    "result_file": "output/ccc 25.02.2026 v1/Размеры для маппинга ccc 25.02.2026.xlsx"
+  },
+  "counts": {
+    "input_rows": 764,
+    "rows_after_reason_filter": 190,
+    "rows_after_parent_filter": 133,
+    "unique_categories_for_classification": 14,
+    "rows_after_category_filter": 127,
+    "rows_with_empty_size_type": 33,
+    "rows_final_output": 127
+  },
+  "classification": {
+    "llm_used": true,
+    "llm_skip_reason": null,
+    "llm_error": null,
+    "category_label_counts": {
+      "CLOTHING": 12,
+      "OTHER": 1,
+      "SHOES": 1
+    },
+    "category_source_counts": {
+      "llm": 14
+    }
+  },
+  "references": {
+    "clothing_brands": 289,
+    "shoes_brands": 179,
+    "clothing_conflicts": [],
+    "shoes_conflicts": []
+  }
+}

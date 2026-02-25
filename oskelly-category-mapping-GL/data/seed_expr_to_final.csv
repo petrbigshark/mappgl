@@ -1,0 +1,656 @@
+﻿expr,outputValue,count_top,count_total,confidence,is_conflict
+ABITI,Classic suits,1,2,0.5,True
+ABITI LUNGHI,OTHER DRESSES,1,1,1.0,False
+ANELLI,RINGS,1,1,1.0,False
+Accessories,Caps and Baseball Caps,1,5,0.2,True
+Animals & Pet Supplies,Other,1,1,1.0,False
+Apparel,Hoodies and Sweatshirts,1,5,0.2,True
+Apparel & Accessories,Low Top Sneakers,1,3,0.3333333333333333,True
+Apparel & Accessories > Clothing > Activewear > Activewear Pants > Shorts,Shorts,1,1,1.0,False
+Apparel & Accessories > Clothing > Activewear > Activewear Pants > Sweatpants,Casual Trousers,1,1,1.0,False
+Apparel & Accessories > Clothing > Activewear > Activewear Pants > Track Pants,Casual Trousers,1,1,1.0,False
+Apparel & Accessories > Clothing > Clothing Tops > Hoodies,Hoodies and Sweatshirts,1,1,1.0,False
+Apparel & Accessories > Clothing > Clothing Tops > Sweaters,Jumpers and Sweaters,1,1,1.0,False
+Apparel & Accessories > Clothing > Clothing Tops > Tank Tops,Singlets,1,2,0.5,True
+Apparel & Accessories > Clothing > Pants,Casual Trousers,1,2,0.5,True
+Apparel & Accessories > Clothing > Socks,Underwear and socks,1,1,1.0,False
+Apparel & Accessories > Clothing > Underwear & Socks > Socks,Underwear and socks,1,1,1.0,False
+Apparel & Accessories > Clothing > Uniforms & Workwear > Sports Uniforms,Tracksuits,1,1,1.0,False
+Apparel & Accessories > Clothing Accessories > Hats,Caps and Baseball Caps,1,1,1.0,False
+Apparel & Accessories > Clothing Accessories > Hats > Baseball Caps,Caps and Baseball Caps,1,1,1.0,False
+Apparel & Accessories > Clothing Accessories > Hats > Bucket Hats,Hats,1,1,1.0,False
+Apparel & Accessories > Clothing Accessories > Hats > Trucker Hats,Caps and Baseball Caps,1,1,1.0,False
+Apparel & Accessories > Handbag & Wallet Accessories > Keychains,Keyrings,1,1,1.0,False
+"Apparel & Accessories > Handbags, Wallets & Cases > Wallets & Money Clips > Wallets",Wallets,1,1,1.0,False
+Apparel & Accessories > Shoes,Low Top Sneakers,1,1,1.0,False
+Apparel & Accessories > Shoes > Flats,Flats,1,1,1.0,False
+Apparel & Accessories > Shoes > Sandals,Sandals,1,1,1.0,False
+Apparel & Accessories > Shoes > Slippers,Flats,1,1,1.0,False
+Apparel & Accessories > Shoes > Sneakers,Sneakers,1,1,1.0,False
+Arts & Entertainment,Art,1,1,1.0,False
+Arts & Entertainment > Hobbies & Creative Arts > Collectibles,Exclusive,1,1,1.0,False
+Arts & Entertainment > Hobbies & Creative Arts > Collectibles > Sports Collectibles > Sports Fan Accessories > Jerseys,Tracksuits,1,1,1.0,False
+BALERINKE,Pumps,1,1,1.0,False
+BALL,Sport,1,1,1.0,False
+BALLARINA,Flats,1,2,0.5,True
+BALLERINE,Low-heeled pumps,1,1,1.0,False
+BALONER,Trench coats and Raincoats,1,1,1.0,False
+BAMBINO,KIDS,1,1,1.0,False
+BEACHWEAR,Swimsuits,1,1,1.0,False
+BEAUTY,Cosmetic bags,1,1,1.0,False
+BEAUTY CASE,Cosmetic bags,1,2,0.5,True
+BODY,Bodysuits,1,1,1.0,False
+BORSE A MANO,Short handle Bags,1,2,0.5,True
+BORSE A SECCHIELLO,Crossbody Bags,1,2,0.5,True
+BORSE A TRACOLLA,Crossbody Bags,1,2,0.5,True
+BORSE DA VIAGGIO,Travel and Sport bags,1,2,0.5,True
+BOX,Caskets,1,1,1.0,False
+BRACCIALI,Bracelets,1,1,1.0,False
+BRIEFCASES,Totes,1,1,1.0,False
+BROOCHES & PINS,Other,1,1,1.0,False
+BROŠ,Pins and Brooches,1,1,1.0,False
+Backpack,Backpacks,1,1,1.0,False
+Backpacks,Backpacks,1,1,1.0,False
+Bag,Shoulder Bags,1,1,1.0,False
+Bagpack,Backpacks,1,1,1.0,False
+Baguette,Clutches and Pouches,1,1,1.0,False
+Beach Towel,Swim trunks,1,1,1.0,False
+Beachwear,Swim trunks,1,1,1.0,False
+Beanie,Other,1,1,1.0,False
+Beauty,Accessories,1,2,0.5,True
+Belt,Belts,1,1,1.0,False
+Belt Bag,Belt bags,1,1,1.0,False
+Belts,Belts,1,1,1.0,False
+Bermuda,Shorts,1,1,1.0,False
+"Bermuda, short",Shorts,1,1,1.0,False
+Blazer and Jackets,Blazers and Jackets,1,1,1.0,False
+Bomber Jacket,Blazers and Jackets,1,1,1.0,False
+Boots,Low Top Shoes,1,1,1.0,False
+"Boots, ankle boots",Boots,1,2,0.5,True
+Boston Bag,Travel and Sport bags,1,1,1.0,False
+Bracelet,Bracelets,1,1,1.0,False
+Bracelets,Bracelets,1,1,1.0,False
+Brooch,Pins and Brooches,1,1,1.0,False
+Brooches & pins,Pins and Brooches,1,1,1.0,False
+Bucket Bag,Crossbody Bags,1,1,1.0,False
+Business & Industrial,Business Card Holders,1,2,0.5,True
+Business Bag,Short handle Bags,1,1,1.0,False
+CALZE,"Socks, Stockings and Tights",1,2,0.5,True
+CAMICIE,Casual shirts,1,3,0.3333333333333333,True
+CANDELE,Candles,1,1,1.0,False
+CANDLES,Candles,1,1,1.0,False
+CAPPELLI,Caps and Baseball Caps,1,3,0.3333333333333333,True
+CAPPELLI E FASCE PER CAPELLI,Caps and Baseball Caps,1,5,0.2,True
+CAPPOTTI,Coats,1,2,0.5,True
+CAPS & HATS,Caps and Baseball Caps,1,2,0.5,True
+CARDS,Personal Addresses,1,1,1.0,False
+CARSHOES,Loafers,1,2,0.5,True
+CASA/BAGNO,Bedspreads and Blankets,1,2,0.5,True
+CINTURE,Belts,1,1,1.0,False
+CLUTCH-TORBE,Clutches and Pouches,1,1,1.0,False
+CLUTCHES,Document folders,1,1,1.0,False
+COLLANE,Chain Necklaces and Pendants,1,2,0.5,True
+COMPLETI,Casual suits,1,2,0.5,True
+COSTUMI DA BAGNO,Swim trunks,1,2,0.5,True
+COVER,Covers and Cases,1,1,1.0,False
+CRAVATTE E PAPILLON,Bow ties,1,2,0.5,True
+CROSSBODY,Crossbody Bags,1,2,0.5,True
+CUFFIE,Hats,1,2,0.5,True
+Cameras & Optics > Camera & Optic Accessories > Camera Parts & Accessories > Camera Bags & Cases > Camera Shoulder Bags,Devices,1,1,1.0,False
+Cap,Caps and Baseball Caps,1,1,1.0,False
+Capes,Capes and Ponchos,1,1,1.0,False
+Card Holder,Cardholders,1,1,1.0,False
+"Casual jackets, parka",Parka Jackets,1,1,1.0,False
+Clutch,Clutches and Pouches,1,2,0.5,True
+"Coats, trench coats",Trench coats and Raincoats,1,1,1.0,False
+Coin Pouch,Wallets,1,1,1.0,False
+Collectibles,Sculptures,1,1,1.0,False
+Costume Earrings,Earrings,1,1,1.0,False
+Costume Necklace,Necklace,1,1,1.0,False
+Cover,Smartphone accessories,1,1,1.0,False
+Covers,Covers and Cases,1,1,1.0,False
+Crewneck,T-shirts,1,1,1.0,False
+Crossbody Bag,Crossbody Bags,1,1,1.0,False
+Crossbody bags,Crossbody Bags,1,2,0.5,True
+DONJE RUBLJE,Bras,1,3,0.3333333333333333,True
+Decorative accessories,Home Accessories,1,1,1.0,False
+Dresses,Classic suits,1,2,0.5,True
+ESPADRILE,Espadrilles,1,1,1.0,False
+ESPADRILLAS,Espadrilles,1,1,1.0,False
+ETUI,Cardholders,1,1,1.0,False
+EXTRA-ACCESSORI,Accessories for Equipment,1,9,0.1111111111111111,True
+EXTRA-OGGETTISTICA,Accessories for Equipment,1,5,0.2,True
+Earrings,Earrings,1,1,1.0,False
+Electronics > Audio > Audio Players & Recorders > Turntables & Record Players,Devices,1,1,1.0,False
+Electronics > Communications > Telephony > Mobile & Smart Phone Accessories > Mobile Phone Cases,Devices,1,1,1.0,False
+FELPE,Hoodies and Sweatshirts,1,1,1.0,False
+FOULARDS & SCARFS,Scarves,1,1,1.0,False
+Flat shoes,Flip Flops,1,2,0.5,True
+"Food, Beverages & Tobacco",Other,1,1,1.0,False
+Footwear,Low Top Sneakers,1,2,0.5,True
+Frames,Other,1,1,1.0,False
+Fur,Fur coats,1,1,1.0,False
+GIACCHE E GILET,Blazers and Jackets,1,3,0.3333333333333333,True
+GIACCHE IN PELLE,Jackets,1,1,1.0,False
+GIUBBINI,Jackets,1,1,1.0,False
+GONNE,Maxi Skirts,1,3,0.3333333333333333,True
+GUANTI,Gloves,1,1,1.0,False
+Gardigan,Cardigans,1,1,1.0,False
+Gilet,Waistcoats,1,1,1.0,False
+Glasses,Glasses and Frames,1,1,1.0,False
+HALJINE,Other Dresses,1,1,1.0,False
+HANDBAG,Totes,1,1,1.0,False
+HANDBAGS,Totes,1,1,1.0,False
+HANDCUFFS,Bracelets,1,1,1.0,False
+HLAČE,Straight Leg,1,1,1.0,False
+Hair accessories,Hair Accessories,1,1,1.0,False
+Hand bags,Totes,1,1,1.0,False
+Hardware,Other,1,1,1.0,False
+Hardware > Tools > Flashlights & Headlamps > Flashlights,Devices,1,1,1.0,False
+Hardware > Tools > Lighters & Matches > Metal Lighters,A Trifle,1,1,1.0,False
+Hardware > Tools > Masonry Tools > Floats,Flats,1,2,0.5,True
+Hardware > Tools > Measuring Tools & Sensors > Levels,Devices,1,1,1.0,False
+Hats,Caps and Baseball Caps,1,2,0.5,True
+Health & Beauty > Personal Care > Oral Care > Toothpicks,Dining Utensils,1,1,1.0,False
+Hi-tech,Accessories for Equipment,1,2,0.5,True
+High Jewelry,Earrings,1,1,1.0,False
+Hobo Bag,Crossbody Bags,1,1,1.0,False
+Home & Garden > Decor > Artwork > Sculptures & Statues,Sculptures,1,1,1.0,False
+Home & Garden > Decor > Home Fragrances,Scents for the home,1,1,1.0,False
+Home & Garden > Decor > Home Fragrances > Incense,Scents for the home,1,1,1.0,False
+Home & Garden > Decor > Rugs,Other,1,1,1.0,False
+Home & Garden > Household Supplies,Other,1,1,1.0,False
+Home & Garden > Kitchen & Dining > Barware > Coasters,Bar Accessories,1,1,1.0,False
+Home & Garden > Kitchen & Dining > Barware > Cocktail Shakers & Tools > Bottle Openers,Bar Accessories,1,1,1.0,False
+Home & Garden > Kitchen & Dining > Food & Beverage Carriers > Water Bottles,Water Glasses,1,1,1.0,False
+Home & Garden > Kitchen & Dining > Kitchen Appliances > Coffee Makers & Espresso Machines > Espresso Machines,Devices,1,1,1.0,False
+Home & Garden > Kitchen & Dining > Kitchen Appliances > Coffee Makers & Espresso Machines > French Presses,Coffee Dishes,1,1,1.0,False
+Home & Garden > Kitchen & Dining > Kitchen Appliances > Ice Crushers & Shavers > Ice Crushers,Bar Accessories,1,1,1.0,False
+Home & Garden > Kitchen & Dining > Tableware > Drinkware,Individual Devices,1,1,1.0,False
+Home & Garden > Kitchen & Dining > Tableware > Drinkware > Mugs,Tea Ware,1,1,1.0,False
+Home & Garden > Kitchen & Dining > Tableware > Drinkware > Tumblers,Glasses,1,1,1.0,False
+Home & Garden > Kitchen & Dining > Tableware > Flatware > Chopstick Accessories > Chopstick Cases,Dining Utensils,1,1,1.0,False
+Home & Garden > Lawn & Garden > Gardening > Pots & Planters > Planters,Vases,1,1,1.0,False
+Home & Garden > Linens & Bedding > Towels,Towels,1,1,1.0,False
+Home & Garden > Linens & Bedding > Towels > Bath Towels & Washcloths > Washcloths,Towels,1,1,1.0,False
+Home & Garden > Linens & Bedding > Towels > Hand Towels,Towels,1,1,1.0,False
+Home & Garden > Linens & Bedding > Towels > Kitchen Towels,Towels,1,1,1.0,False
+Home & Garden > Parasols & Rain Umbrellas > Rain Umbrellas,Other,1,1,1.0,False
+Home & Garden > Smoking Accessories > Ashtrays,A Trifle,1,1,1.0,False
+Home & Garden > Smoking Accessories > Cigar Cases,Caskets,1,1,1.0,False
+Home->Beauty & Lifestyle->Beauty->Beauty Accessories,Cosmetic bags,1,1,1.0,False
+Home->Beauty & Lifestyle->Lifestyle->Umbrella,Umbrellas,1,1,1.0,False
+Home->Man->Clothing->Hoodie,Hoodies and Sweatshirts,1,1,1.0,False
+Home->Man->Clothing->Jacket,Jackets,1,1,1.0,False
+Home->Man->Clothing->Shorts,Shorts,1,1,1.0,False
+Home->Man->Clothing->Trousers,Casual Trousers,1,1,1.0,False
+Home->Men->Accessories->Belts,Belts,1,1,1.0,False
+Home->Men->Accessories->Glasses,Sunglasses,1,1,1.0,False
+Home->Men->Accessories->Hats,Caps and Baseball Caps,1,1,1.0,False
+Home->Men->Accessories->Jewellery->Necklaces,Necklaces,1,1,1.0,False
+Home->Men->Accessories->Keychains,Keyrings,1,1,1.0,False
+Home->Men->Accessories->Scarves,Scarves,1,1,1.0,False
+"Home->Men->Accessories->Scarves, hats and gloves",Caps and Baseball Caps,1,3,0.3333333333333333,True
+"Home->Men->Accessories->Scarves, hats and gloves->Gloves",Gloves,1,1,1.0,False
+"Home->Men->Accessories->Scarves, hats and gloves->Hats",Caps and Baseballcaps,1,2,0.5,True
+"Home->Men->Accessories->Scarves, hats and gloves->Scarves",Scarves,1,1,1.0,False
+Home->Men->Accessories->Small leather goods,Cardholders,1,1,1.0,False
+Home->Men->Accessories->Sunglasses,Sunglasses,1,1,1.0,False
+Home->Men->Accessories->Wallets,Wallets,1,1,1.0,False
+Home->Men->Accessories->Wallets->Card holder,Cardholders,1,1,1.0,False
+Home->Men->Accessories->Wallets->Small leather goods,Wallets,1,1,1.0,False
+Home->Men->Accessories->Wallets->Wallets,Wallets,1,1,1.0,False
+Home->Men->Bags,Shoulder Bags,1,1,1.0,False
+Home->Men->Bags->Backpacks,Backpacks,1,1,1.0,False
+Home->Men->Bags->Belt bags,Belt bags,1,1,1.0,False
+Home->Men->Bags->Business and travel bags,Briefcases,1,2,0.5,True
+Home->Men->Bags->Crossbody bags,Shoulder Bags,1,1,1.0,False
+Home->Men->Bags->Messenger Bags,Shoulder Bags,1,1,1.0,False
+Home->Men->Bags->Tote bags,Totes,1,1,1.0,False
+Home->Men->Bags->Travel bags,Travel and Sports Bags,1,1,1.0,False
+Home->Men->Clothing,Casual Trousers,1,1,1.0,False
+Home->Men->Clothing->Activewear,Casual Trousers,1,1,1.0,False
+Home->Men->Clothing->Beachwear/Underwear->Intimo,Underwear and socks,1,1,1.0,False
+Home->Men->Clothing->Beachwear/Underwear->Socks,Underwear and socks,1,1,1.0,False
+Home->Men->Clothing->Beachwear/Underwear->Swimsuits,Swim trunks,1,1,1.0,False
+Home->Men->Clothing->Beachwear/Underwear->Swimsuits->Intimo,Swim trunks,1,1,1.0,False
+Home->Men->Clothing->Blazers,Jackets,1,1,1.0,False
+Home->Men->Clothing->Coats,Coats,1,1,1.0,False
+Home->Men->Clothing->Jackets,Jackets,1,1,1.0,False
+Home->Men->Clothing->Jackets->Puffer & Down jackets,Down Jackets,1,1,1.0,False
+Home->Men->Clothing->Jackets/blazers,Jackets,1,1,1.0,False
+Home->Men->Clothing->Jackets/blazers->Blazers and gilet,Jackets,1,1,1.0,False
+Home->Men->Clothing->Jackets/blazers->Bomber jackets,Jackets,1,1,1.0,False
+Home->Men->Clothing->Jackets/blazers->Casual jackets,Jackets,1,1,1.0,False
+Home->Men->Clothing->Jackets/blazers->Jackets,Jackets,1,1,1.0,False
+Home->Men->Clothing->Jackets/blazers->Windbreaker,Jackets,1,1,1.0,False
+Home->Men->Clothing->Jeans,Straight Jeans,1,1,1.0,False
+Home->Men->Clothing->Jeans->Jeans,Straight jeans,1,1,1.0,False
+Home->Men->Clothing->Knitwear,Jumpers and Sweaters,1,1,1.0,False
+Home->Men->Clothing->Knitwear->Cardigans,Cardigans,1,1,1.0,False
+Home->Men->Clothing->Knitwear->Pullovers,Jumpers and Sweaters,1,1,1.0,False
+Home->Men->Clothing->Leather coats,Jackets,1,1,1.0,False
+Home->Men->Clothing->Leather jackets,Jackets,1,1,1.0,False
+Home->Men->Clothing->Outerwear->Coats,Coats,1,1,1.0,False
+Home->Men->Clothing->Outerwear->Jackets,Jackets,1,1,1.0,False
+Home->Men->Clothing->Outerwear->Leather coats,Coats,1,1,1.0,False
+Home->Men->Clothing->Outerwear->Leather jackets,Jackets,1,1,1.0,False
+Home->Men->Clothing->Outerwear->Parkas,Parka Jackets,1,1,1.0,False
+Home->Men->Clothing->Outerwear->Puffer jackets,Down Jackets,1,1,1.0,False
+Home->Men->Clothing->Outerwear->Trench coats and rain coats,Trench Coats and Raincoats,1,1,1.0,False
+Home->Men->Clothing->Outerwear->Vests,Vests,1,1,1.0,False
+Home->Men->Clothing->Parkas,Parka Jackets,1,1,1.0,False
+Home->Men->Clothing->Polo Shirts,Short Sleeve Polos,1,1,1.0,False
+Home->Men->Clothing->Polo Shirts->Short sleeve polo shirts,Short Sleeve Polos,1,1,1.0,False
+Home->Men->Clothing->Shirts,Casual shirts,1,1,1.0,False
+Home->Men->Clothing->Shorts,Shorts,1,1,1.0,False
+Home->Men->Clothing->Sweatshirts & Hoodies,Hoodies and Sweatshirts,1,1,1.0,False
+Home->Men->Clothing->Swimwear,Swim trunks,1,1,1.0,False
+Home->Men->Clothing->T-Shirts,T-shirts,1,1,1.0,False
+Home->Men->Clothing->Topwear,T-shirts,1,1,1.0,False
+Home->Men->Clothing->Topwear->Polo shirts,Short Sleeve Polos,1,1,1.0,False
+Home->Men->Clothing->Topwear->Sweaters,Jumpers and Sweaters,1,1,1.0,False
+Home->Men->Clothing->Topwear->T-shirts,T-shirts,1,1,1.0,False
+Home->Men->Clothing->Trousers,Casual Trousers,1,1,1.0,False
+Home->Men->Clothing->Trousers->Bermuda shorts,Shorts,1,1,1.0,False
+Home->Men->Clothing->Trousers->Joggers,Casual Trousers,1,1,1.0,False
+Home->Men->Clothing->Trousers->Trousers,Casual Trousers,1,1,1.0,False
+Home->Men->Clothing->Underwear and Beachwear->Beachwear,Swim trunks,1,1,1.0,False
+Home->Men->Clothing->Underwear and Beachwear->Beachwear->Underwear,Underwear and socks,1,1,1.0,False
+Home->Men->Clothing->Underwear and Beachwear->Socks,Underwear and socks,1,1,1.0,False
+Home->Men->Clothing->Underwear and Beachwear->Underwear,Underwear and socks,1,1,1.0,False
+Home->Men->Clothing->Underwear->Socks,Underwear and socks,1,1,1.0,False
+Home->Men->Clothing->Vests,Vests,1,1,1.0,False
+Home->Men->Clothing->Vests->Puffer vests,Vests,1,1,1.0,False
+Home->Men->Shoes,Low Top Shoes,1,1,1.0,False
+Home->Men->Shoes->Boots,Low Top Shoes,1,1,1.0,False
+Home->Men->Shoes->Espadrilles,Espadrilles,1,1,1.0,False
+Home->Men->Shoes->Formal shoes,Flats,1,1,1.0,False
+Home->Men->Shoes->Lace-ups,Flats,1,1,1.0,False
+Home->Men->Shoes->Loafers,Loafers,1,1,1.0,False
+Home->Men->Shoes->Moccasins,Moccasins,1,1,1.0,False
+Home->Men->Shoes->Sandals,Sandals,1,1,1.0,False
+Home->Men->Shoes->Sandals and Slippers,Sandals,1,1,1.0,False
+Home->Men->Shoes->Sneakers,Low Top Sneakers,1,1,1.0,False
+Home->Unisex->Borse unisex->Borse a mano,Totes,1,1,1.0,False
+Home->Unisex->Borse unisex->Borse a tracolla e a spalla,Crossbody Bags,1,1,1.0,False
+Home->Unisex->Borse unisex->Business e travels,Travel and Sports bags,1,1,1.0,False
+Home->Unisex->Borse unisex->Marsupi,Totes,1,1,1.0,False
+Home->Unisex->Borse unisex->Tote bag,Totes,1,1,1.0,False
+Home->Unisex->Unisex accessories->Bijoux,Bracelets,1,3,0.3333333333333333,True
+Home->Unisex->Unisex accessories->Minuteria/slg,Cardholders,1,1,1.0,False
+Home->Unisex->Unisex accessories->Portafogli,Wallets,1,1,1.0,False
+"Home->Unisex->Unisex accessories->Sciarpe, cappelli e guanti",Scarves,1,1,1.0,False
+Home->Woman->Bags->Handbags,Crossbody Bags,1,1,1.0,False
+Home->Woman->Clothing,Midi Skirts,1,1,1.0,False
+Home->Women,Midi Skirts,1,1,1.0,False
+Home->Women->Accessories,Other,1,1,1.0,False
+Home->Women->Accessories->Belt,Belts,1,1,1.0,False
+Home->Women->Accessories->Belts,Belts,1,1,1.0,False
+Home->Women->Accessories->Glasses,Sunglasses,1,1,1.0,False
+Home->Women->Accessories->Hats,Panama,1,1,1.0,False
+Home->Women->Accessories->Hats and  hair accessories->Hair accessories,Hair Accessories,1,1,1.0,False
+Home->Women->Accessories->Hats and  hat accessories->Hair accessories,Hair Accessories,1,1,1.0,False
+Home->Women->Accessories->Hats and  hat accessories->Hats,Panama,1,1,1.0,False
+Home->Women->Accessories->Jewellery,Bracelets,1,2,0.5,True
+Home->Women->Accessories->Jewellery->Bracelets,Bracelets,1,1,1.0,False
+Home->Women->Accessories->Jewellery->Earrings,Earrings,1,1,1.0,False
+Home->Women->Accessories->Jewellery->Necklaces,Necklace,1,1,1.0,False
+Home->Women->Accessories->Jewellery->Rings,Rings,1,1,1.0,False
+Home->Women->Accessories->Jewelry,Bracelets,1,1,1.0,False
+Home->Women->Accessories->Keychains,Key Rings,1,1,1.0,False
+Home->Women->Accessories->Scarves,Scarves,1,1,1.0,False
+Home->Women->Accessories->Scarves and Gloves,Scarves,1,1,1.0,False
+Home->Women->Accessories->Scarves and Gloves->Scarves,Scarves,1,1,1.0,False
+"Home->Women->Accessories->Scarves, hats and gloves",Panama,1,2,0.5,True
+"Home->Women->Accessories->Scarves, hats and gloves->Scarves",Scarves,1,1,1.0,False
+Home->Women->Accessories->Small leather goods,Cardholder,1,2,0.5,True
+Home->Women->Accessories->Sunglasses,Sunglasses,1,1,1.0,False
+Home->Women->Accessories->Technology,Accessories for Equipment,1,1,1.0,False
+Home->Women->Accessories->Wallets,Wallets,1,1,1.0,False
+Home->Women->Accessories->Wallets->Card holder,Cardholders,1,1,1.0,False
+Home->Women->Accessories->Wallets->Wallets,Wallets,1,1,1.0,False
+Home->Women->Bags,Crossbody Bags,1,1,1.0,False
+Home->Women->Bags->Belt bags,Belt Bags,1,1,1.0,False
+Home->Women->Bags->Clutch Bags,Clutches and Pouches,1,1,1.0,False
+Home->Women->Bags->Clutches,Clutches and Pouches,1,1,1.0,False
+Home->Women->Bags->Cross Body & Shoulder Bags,Crossbody Bags,1,1,1.0,False
+Home->Women->Bags->Crossbody Bags,Crossbody Bags,1,1,1.0,False
+Home->Women->Bags->Handbags,Totes,1,1,1.0,False
+Home->Women->Bags->Mini Bags,Short handle Bags,1,1,1.0,False
+Home->Women->Bags->Shoulder bags,Crossbody Bags,1,1,1.0,False
+Home->Women->Bags->Tote bags,Totes,1,1,1.0,False
+Home->Women->Clothing,Hoodies and Sweatshirts,1,1,1.0,False
+Home->Women->Clothing->Activewear,Leggings and Biker shorts,1,1,1.0,False
+Home->Women->Clothing->Beachwear,Swimsuits,1,1,1.0,False
+Home->Women->Clothing->Beachwear->Bikinis,Swimsuits,1,1,1.0,False
+Home->Women->Clothing->Beachwear->One pieces,Swimsuits,1,1,1.0,False
+Home->Women->Clothing->Beachwear->Swimsuits,Swimsuits,1,1,1.0,False
+Home->Women->Clothing->Coats,Coats,1,1,1.0,False
+Home->Women->Clothing->Dresses,Other Dresses,1,1,1.0,False
+Home->Women->Clothing->Dresses->Maxi,Evening Dresses,1,1,1.0,False
+Home->Women->Clothing->Dresses->Midi,Other Dresses,1,1,1.0,False
+Home->Women->Clothing->Dresses->Mini,Cocktail Dresses,1,1,1.0,False
+Home->Women->Clothing->Dresses->Mini dresses,Cocktail Dresses,1,1,1.0,False
+Home->Women->Clothing->Jacket,Blazers and Jackets,1,1,1.0,False
+Home->Women->Clothing->Jackets,Blazers and Jackets,1,1,1.0,False
+Home->Women->Clothing->Jackets->Blazers,Blazers and Jackets,1,1,1.0,False
+Home->Women->Clothing->Jackets->Puffer & Down jackets,Puffer and Down Jackets,1,1,1.0,False
+Home->Women->Clothing->Jackets/blazers,Blazers and Jackets,1,1,1.0,False
+Home->Women->Clothing->Jackets/blazers->Blazers,Blazers and Jackets,1,1,1.0,False
+Home->Women->Clothing->Jackets/blazers->Blazers and Vests,Blazers and Jackets,1,1,1.0,False
+Home->Women->Clothing->Jackets/blazers->Bomber jackets,Jackets,1,1,1.0,False
+Home->Women->Clothing->Jackets/blazers->Bomber jackets->Jackets,Jackets,1,1,1.0,False
+Home->Women->Clothing->Jackets/blazers->Casual jackets,Jackets,1,1,1.0,False
+Home->Women->Clothing->Jackets/blazers->Denim jackets,Jackets,1,1,1.0,False
+Home->Women->Clothing->Jackets/blazers->Jackets,Jackets,1,1,1.0,False
+Home->Women->Clothing->Jeans,Straight fit Jeans,1,1,1.0,False
+Home->Women->Clothing->Jeans->Flared,Flare Jeans,1,1,1.0,False
+Home->Women->Clothing->Jeans->Jeans,Straight fit Jeans,1,1,1.0,False
+Home->Women->Clothing->Jeans->Shorts,Straight fit Jeans,1,1,1.0,False
+Home->Women->Clothing->Jeans->Shorts in denim,Shorts,1,1,1.0,False
+Home->Women->Clothing->Jeans->Straight,Straight fit Jeans,1,1,1.0,False
+Home->Women->Clothing->Jeans->Trousers->Denim shorts->Shorts,Straight fit Jeans,1,1,1.0,False
+Home->Women->Clothing->Jumpsuits,Jumpsuits,1,1,1.0,False
+Home->Women->Clothing->Knitwear,Sweaters,1,1,1.0,False
+Home->Women->Clothing->Knitwear->Cardigans,Cardigans,1,1,1.0,False
+Home->Women->Clothing->Knitwear->Pullovers,Sweaters,1,1,1.0,False
+Home->Women->Clothing->Knitwear->Sweaters,Sweaters,1,1,1.0,False
+Home->Women->Clothing->Leather clothing,Jackets,1,1,1.0,False
+Home->Women->Clothing->Lingerie,Outfit Sets,1,1,1.0,False
+Home->Women->Clothing->Lingerie and Nightwear->Bras,Bras,1,1,1.0,False
+Home->Women->Clothing->Lingerie and Nightwear->Slips,Panties,1,1,1.0,False
+Home->Women->Clothing->Lingerie and Nightwear->Socks and Tights,"Socks, Stockings and Tights",1,1,1.0,False
+Home->Women->Clothing->Lingerie->Bras,Bras,1,1,1.0,False
+Home->Women->Clothing->Lingerie->Slips,Panties,1,1,1.0,False
+Home->Women->Clothing->Lingerie->Socks,"Socks, Stockings, and Tights",1,1,1.0,False
+Home->Women->Clothing->Outerwear,Jackets,1,1,1.0,False
+Home->Women->Clothing->Outerwear->Capes,Capes and Ponchos,1,1,1.0,False
+Home->Women->Clothing->Outerwear->Coats,Coats,1,1,1.0,False
+Home->Women->Clothing->Outerwear->Jackets,Jackets,1,1,1.0,False
+Home->Women->Clothing->Outerwear->Leather clothing,Jackets,1,1,1.0,False
+Home->Women->Clothing->Outerwear->Leather coats,Coats,1,1,1.0,False
+Home->Women->Clothing->Outerwear->Parkas,Parka Jackets,1,1,1.0,False
+Home->Women->Clothing->Outerwear->Pea coats,Coats,1,1,1.0,False
+Home->Women->Clothing->Outerwear->Puffer jackets,Puffer and Down Jackets,1,1,1.0,False
+Home->Women->Clothing->Outerwear->Trench coats and rain coats,Trench coats and Raincoats,1,1,1.0,False
+Home->Women->Clothing->Puffer jackets,Puffer and Down Jackets,1,1,1.0,False
+Home->Women->Clothing->Shirt,Shirts,1,1,1.0,False
+Home->Women->Clothing->Shirts and Blouses->Blouses,Blouses,1,1,1.0,False
+Home->Women->Clothing->Shirts and Blouses->Shirts,Shirts,1,1,1.0,False
+Home->Women->Clothing->Shirts->Blouses,Blouses,1,1,1.0,False
+Home->Women->Clothing->Shirts->Shirts,Shirts,1,1,1.0,False
+Home->Women->Clothing->Shorts,Shorts,1,1,1.0,False
+Home->Women->Clothing->Skirt,Midi Skirts,1,1,1.0,False
+Home->Women->Clothing->Skirts,Midi Skirts,1,1,1.0,False
+Home->Women->Clothing->Skirts->Maxi,Maxi Skirts,1,1,1.0,False
+Home->Women->Clothing->Skirts->Midi,Midi Skirts,1,1,1.0,False
+Home->Women->Clothing->Skirts->Mini,Mini Skirts,1,1,1.0,False
+Home->Women->Clothing->Sweatshirts & Hoodies,Hoodies and Sweatshirts,1,1,1.0,False
+Home->Women->Clothing->T-Shirt,T-Shirts,1,1,1.0,False
+Home->Women->Clothing->Tops,Tanks and Camis,1,1,1.0,False
+Home->Women->Clothing->Tops->Sweaters,Sweaters,1,1,1.0,False
+Home->Women->Clothing->Tops->T-shirts and polo shirts,T-Shirts,1,1,1.0,False
+Home->Women->Clothing->Tops->Tops,Tanks and Camis,1,1,1.0,False
+Home->Women->Clothing->Trench coats and rain coats,Tranch coats and Raincoats,1,2,0.5,True
+Home->Women->Clothing->Trousers,Straight Leg,1,1,1.0,False
+Home->Women->Clothing->Trousers->Casual trousers,Straight Leg,1,1,1.0,False
+Home->Women->Clothing->Trousers->Denim shorts,Shorts,1,1,1.0,False
+Home->Women->Clothing->Trousers->Joggers,Straight Leg,1,1,1.0,False
+Home->Women->Clothing->Trousers->Leggings,Leggings and Biker shorts,1,1,1.0,False
+Home->Women->Clothing->Trousers->Shorts,Shorts,1,1,1.0,False
+Home->Women->Clothing->Trousers->Trousers,Straight Leg,1,1,1.0,False
+Home->Women->Clothing->Underwear->Bodies,Bodysuits,1,1,1.0,False
+Home->Women->Clothing->Underwear->Hosiery,Bras,1,2,0.5,True
+Home->Women->Clothing->Vests,Vests,1,1,1.0,False
+Home->Women->Clothing->Vests->Puffer vests,Vests,1,1,1.0,False
+Home->Women->Outwear->Coat,Coats,1,1,1.0,False
+Home->Women->Shoes,Boots,1,1,1.0,False
+Home->Women->Shoes->Ankle Boots,Boots,1,1,1.0,False
+Home->Women->Shoes->Ballerinas,Loafers,1,1,1.0,False
+Home->Women->Shoes->Boots and booties,Boots,1,1,1.0,False
+Home->Women->Shoes->Boots and booties->Ankle boots,Boots,1,1,1.0,False
+Home->Women->Shoes->Boots and booties->Boots,Boots,1,1,1.0,False
+Home->Women->Shoes->Boots and booties->Chelsea boots,Boots,1,1,1.0,False
+Home->Women->Shoes->Boots and booties->Combat boots,Boots,1,1,1.0,False
+Home->Women->Shoes->Flats,Pumps,1,1,1.0,False
+Home->Women->Shoes->Flats->Ballet flats,Loafers,1,1,1.0,False
+Home->Women->Shoes->Flats->Espadrillas,Espadrilles,1,1,1.0,False
+Home->Women->Shoes->Flats->Flat,Pumps,1,1,1.0,False
+Home->Women->Shoes->Loafers,Loafers,1,1,1.0,False
+Home->Women->Shoes->Long boots,Boots,1,1,1.0,False
+Home->Women->Shoes->Moccasins,Loafers,1,1,1.0,False
+Home->Women->Shoes->Mules,Mules,1,1,1.0,False
+Home->Women->Shoes->Pumps,Pumps,1,1,1.0,False
+Home->Women->Shoes->Sandals,Sandals,1,1,1.0,False
+Home->Women->Shoes->Slippers,Flip Flops,1,1,1.0,False
+Home->Women->Shoes->Sneakers,Sneakers,1,1,1.0,False
+Hoodie,Hoodies and Sweatshirts,1,2,0.5,True
+INTIMO,Bodysuits,1,4,0.25,True
+IPAD CASE,Smartphone accessories,1,1,1.0,False
+IPHONE CASE,Accessories for Equipment,1,3,0.3333333333333333,True
+JAKNE,Capes and Ponchos,1,3,0.3333333333333333,True
+JASTUK,Pillows and Blankets,1,1,1.0,False
+JERSEYS & KNITWEAR,Cardigans,1,3,0.3333333333333333,True
+Jacket,Blazers and Jackets,1,2,0.5,True
+Jackets,Blazers and Jackets,1,3,0.3333333333333333,True
+Jean,Straight Jeans,1,1,1.0,False
+Jeans,Straight Jeans,1,1,1.0,False
+Jewelry,Other,1,1,1.0,False
+Jumpsuits,Jumpsuits,1,1,1.0,False
+KAPE,Panama,1,1,1.0,False
+KAPUTI,Coats,1,1,1.0,False
+KLOMPE,Mules,1,2,0.5,True
+KOMBINEZON,Jumpsuits,1,1,1.0,False
+KOŠULJE,Blouses,1,2,0.5,True
+KUPAĆI KOSTIM,Swimsuits,1,1,1.0,False
+Key Case,Key Cases,1,1,1.0,False
+Key Chain,Clutches and Pouches,1,1,1.0,False
+Key Holder,Key Rings,1,1,1.0,False
+Keychain,A Trifle,1,1,1.0,False
+Keyring,Housekeepers,1,2,0.5,True
+Keyrings,Housekeepers,1,2,0.5,True
+Knitwear,Jumpers and Sweaters,1,1,1.0,False
+LEGGINGS,Casual Trousers,1,1,1.0,False
+LIFESTYLE,Sculpture,1,1,1.0,False
+Lace up shoes,Boots,1,2,0.5,True
+Laptop Bag,Shoulder Bags,1,1,1.0,False
+Leggings,Leggings and Biker shorts,1,2,0.5,True
+Loafers,Loafers,1,1,1.0,False
+Loafers and Moccasins,Loafers,1,1,1.0,False
+Longsleeve,Long - Sleeved tops,1,1,1.0,False
+Luggage & Bags,Travel and Sports Bags,1,1,1.0,False
+Luggage & Bags > Backpacks,Backpacks,1,1,1.0,False
+MAGLIE,Blouses,1,8,0.125,True
+MAGLIERIA,Cardigans,1,5,0.2,True
+MAJICE,Long - Sleeved tops,1,3,0.3333333333333333,True
+MARAME,Scarves,1,1,1.0,False
+MARSUPI,Backpacks,1,3,0.3333333333333333,True
+MEN,Sunglasses,1,2,0.5,True
+MOCASSINI,Loafers,1,2,0.5,True
+MOCCASINS,Loafers,1,1,1.0,False
+MOKASINKE,Loafers,1,1,1.0,False
+Media > Books,Books,1,1,1.0,False
+Messenger Bag,Crossbody Bags,1,1,1.0,False
+Mocassins,Moccasins,1,1,1.0,False
+NAOČALE,Sunglasses,1,1,1.0,False
+NARUKVICA,Bracelets,1,1,1.0,False
+NAUŠNICE,Earrings,1,1,1.0,False
+NESESER,Cosmetic bags,1,1,1.0,False
+NOVČANICI,Clutches and Pouches,1,2,0.5,True
+Necklaces,Chain Necklaces and Pendants,1,2,0.5,True
+OCCHIALI DA SOLE,Sunglasses,1,1,1.0,False
+OGRLICA,Chains,1,2,0.5,True
+OMBRELLI,Umbrellas,1,1,1.0,False
+OPTICAL GLASSES,Glasses and frames,1,1,1.0,False
+ORECCHINI,Earrings,1,1,1.0,False
+OROLOGI,Watches,1,1,1.0,False
+OTHER,Key Rings,1,1,1.0,False
+OUTERWEAR,Coats,1,4,0.25,True
+Office Supplies > Book Accessories > Bookmarks,Books,1,1,1.0,False
+"Office Supplies > Filing & Organization > Calendars, Organizers & Planners",Books,1,1,1.0,False
+Office Supplies > Filing & Organization > Folders & Report Covers,Books,1,1,1.0,False
+Office Supplies > General Office Supplies > Paper Clips & Clamps,A Trifle,1,1,1.0,False
+Office Supplies > General Office Supplies > Paper Products > Notebooks & Notepads > Pocket Notebooks,Books,1,1,1.0,False
+Office Supplies > General Office Supplies > Paper Products > Post Cards,Personal Addresses,1,1,1.0,False
+Office Supplies > Office Instruments > Writing & Drawing Instruments > Crayons,Art,1,1,1.0,False
+Office Supplies > Office Instruments > Writing & Drawing Instruments > Pens & Pencils > Pens,A Trifle,1,1,1.0,False
+Other Accessories,Gloves,1,4,0.25,True
+Outewear,Blazers and Jackets,1,1,1.0,False
+PANTALONI,Boots,1,6,0.16666666666666666,True
+PANTS,Boots,1,1,1.0,False
+PAPUČE,Flip Flops,1,1,1.0,False
+PELLICCE,Coats,1,1,1.0,False
+PENDANT,Pendants,1,1,1.0,False
+PIUMINI,Down Jackets,1,2,0.5,True
+PLATFORM,Pumps,1,1,1.0,False
+PLATFORME,Sandals,1,1,1.0,False
+POCHETTES,Clutches and Pouches,1,1,1.0,False
+POJAS,Belts,1,1,1.0,False
+POLO,T-Shirts,1,1,1.0,False
+PORTACHIAVI,Key Rings,1,2,0.5,True
+PORTAFOGLI,Cardholders,1,4,0.25,True
+PRIVJESAK,Pendants,1,1,1.0,False
+PRSLUK,Puffer and Down Jackets,1,1,1.0,False
+PRSTEN,Rings,1,1,1.0,False
+PULOVER,Cardigans,1,3,0.3333333333333333,True
+PUMPS,Flats,1,1,1.0,False
+Pant,Casual Trousers,1,1,1.0,False
+Pant Green,Casual Trousers,1,1,1.0,False
+Pants,Casual Trousers,1,1,1.0,False
+Passport Cover,Covers and Cases,1,1,1.0,False
+Phone Case,Smartphone accessories,1,1,1.0,False
+Pochette,Wrist Bags,1,1,1.0,False
+Polo,Blouses,1,3,0.3333333333333333,True
+Pouch,Clutches and Pouches,1,2,0.5,True
+Pumps,Pumps,1,1,1.0,False
+RAJF,Headbands,1,1,1.0,False
+RUKAVICE,Gloves,1,1,1.0,False
+RUKSACI,Backpacks,1,1,1.0,False
+RUČNICI,Towels,1,1,1.0,False
+Ring,Rings,1,1,1.0,False
+Rings,Rings,1,1,1.0,False
+SAKO,Blazers and Jackets,1,1,1.0,False
+SANDALE,Sandals,1,1,1.0,False
+SANDALI,Flip flops,1,2,0.5,True
+SCARPE CON TACCO,Flats,1,3,0.3333333333333333,True
+SCARPE STRINGATE,Brogues and Oxfords,1,2,0.5,True
+SCIARPE E FOULARD,Scarves,1,1,1.0,False
+SHIRTS,Casual shirts,1,1,1.0,False
+SHOES,Boots,1,1,1.0,False
+SHOPPING BAGS,Totes,1,1,1.0,False
+SHORTS,Shorts,1,1,1.0,False
+SHOULDER/CROSSBODY-TORBE,Crossbody Bags,1,1,1.0,False
+SKIWEAR,Tracksuits,1,1,1.0,False
+SLIPPERS,Flats,1,2,0.5,True
+SMALL LEATHER GOODS,Cardholders,1,2,0.5,True
+SNEAKERS,Slip-Ons,1,1,1.0,False
+SPILLE,Pins and Brooches,1,1,1.0,False
+STIVALI,Boots,1,2,0.5,True
+SUITS,Blazers and Jackets,1,2,0.5,True
+SUKNJE,Midi Skirts,1,1,1.0,False
+SUNGLASSES,Sunglasses,1,1,1.0,False
+Sandals,Sandals,1,1,1.0,False
+Satchel,Crossbody Bags,1,1,1.0,False
+Scarf,Scarves,1,1,1.0,False
+"Scarves, foulards",Scarves,1,1,1.0,False
+Shirt,Casual shirts,1,2,0.5,True
+"Shirt, blouse",Blouses,1,2,0.5,True
+Shirts and Blouses,Shirts,1,1,1.0,False
+Shoes,Low Top Shoes,1,1,1.0,False
+Short,Shorts,1,1,1.0,False
+Shoulder Bag,Crossbody Bags,1,1,1.0,False
+Shoulder bags,Crossbody Bags,1,2,0.5,True
+Skeakers,Sneakers,1,1,1.0,False
+Skirts,Midi Skirts,1,1,1.0,False
+Slider,Flip flops,1,1,1.0,False
+Slides,Flip flops,1,1,1.0,False
+Sneaker,Low Top Sneakers,1,1,1.0,False
+Sneakers,Low Top Sneakers,1,2,0.5,True
+Socks,"Socks, Stockings and Tights",1,2,0.5,True
+Sporting Goods,Sport,1,1,1.0,False
+Sporting Goods > Athletics > Basketball > Basketballs,Sport,1,1,1.0,False
+Sporting Goods > Athletics > Boxing & Martial Arts > Boxing & Martial Arts Training Equipment > Punching & Training Bags > Punching & Training Speed Bags,Sport,1,1,1.0,False
+Sporting Goods > Athletics > Figure Skating & Hockey > Hockey Sticks,Sport,1,1,1.0,False
+Sporting Goods > Athletics > General Purpose Athletic Equipment > Ball Pumps,Sport,1,1,1.0,False
+Sporting Goods > Athletics > Soccer > Soccer Balls,Sport,1,1,1.0,False
+Sporting Goods > Outdoor Recreation > Boating & Water Sports > Boating & Rafting > Kayaks,Sport,1,1,1.0,False
+Sporting Goods > Outdoor Recreation > Camping & Hiking > Camp Furniture,Other,1,1,1.0,False
+Sporting Goods > Outdoor Recreation > Camping & Hiking > Camping Lights & Lanterns,Devices,1,1,1.0,False
+Sporting Goods > Outdoor Recreation > Equestrian > Horse Tack Accessories > Saddle Accessories > Saddle Bags & Panniers,Other,1,1,1.0,False
+Sporting Goods > Outdoor Recreation > Equestrian > Horse Tack Accessories > Saddle Accessories > Saddle Covers & Cases,Other,1,1,1.0,False
+Sporting Goods > Outdoor Recreation > Skateboarding > Complete Skateboards,Sport,1,1,1.0,False
+Sporting Goods > Outdoor Recreation > Skateboarding > Skateboard Parts > Skateboard Decks,Sport,1,1,1.0,False
+Sportswear,Tracksuits,1,1,1.0,False
+Straight fit Jeans,Straight Jeans,1,1,1.0,False
+Sweater,Jumpers and Sweaters,1,1,1.0,False
+"Sweater, cardigans",Cardigans,1,2,0.5,True
+Sweaters,Jumpers and Sweaters,1,1,1.0,False
+Sweatshirt,Hoodies and Sweatshirts,1,1,1.0,False
+Swimming Suit,Swim trunks,1,1,1.0,False
+Swimming short,Shorts,1,1,1.0,False
+T shirt,T-shirts,1,1,1.0,False
+T-SHIRTS & TOPS,Classic shirts,1,1,1.0,False
+T-Shirt,T-shirts,1,1,1.0,False
+TENISICE,Sneakers,1,1,1.0,False
+TIES,Scarves,1,1,1.0,False
+TOP,Blouses,1,1,1.0,False
+TOP HANDLES-TORBE,Totes,1,1,1.0,False
+TOWELS,Underwear and socks,1,1,1.0,False
+TRACOLLE,Bag Accessories,1,1,1.0,False
+TRENCH,Jackets,1,2,0.5,True
+TUTE,Jumpsuits,1,1,1.0,False
+"Ties, papillon",Ties,1,1,1.0,False
+Tops,Blouses,1,2,0.5,True
+Tote,Totes,1,1,1.0,False
+Tote bag,Totes,1,1,1.0,False
+Towels,Towels,1,1,1.0,False
+Toys & Games > Games > Card Games,A Trifle,1,1,1.0,False
+Toys & Games > Games > Dice Sets & Games,A Trifle,1,1,1.0,False
+Toys & Games > Games > Tile Games,A Trifle,1,1,1.0,False
+Toys & Games > Toys > Activity Toys > Bouncy Balls,A Trifle,1,1,1.0,False
+Toys & Games > Toys > Art & Drawing Toys > Stickers & Sticker Machines,Art,1,1,1.0,False
+Toys & Games > Toys > Building Toys > Foam Blocks,A Trifle,1,1,1.0,False
+"Toys & Games > Toys > Dolls, Playsets & Toy Figures",A Trifle,1,1,1.0,False
+"Toys & Games > Toys > Dolls, Playsets & Toy Figures > Action & Toy Figures",A Trifle,1,1,1.0,False
+"Toys & Games > Toys > Dolls, Playsets & Toy Figures > Action & Toy Figures > Action Figures",A Trifle,1,2,0.5,True
+"Toys & Games > Toys > Dolls, Playsets & Toy Figures > Action & Toy Figures > Animal Figures",A Trifle,1,1,1.0,False
+"Toys & Games > Toys > Dolls, Playsets & Toy Figures > Stuffed Animals",A Trifle,1,1,1.0,False
+Toys & Games > Toys > Remote Control Toys > Remote Control Motorcycles,Devices,1,1,1.0,False
+Toys & Games > Toys > Riding Toys > Electric Riding Vehicles,Devices,1,1,1.0,False
+Toys & Games > Toys > Toy Weapons & Gadgets,A Trifle,1,1,1.0,False
+Travel Bag,Travel and Sport bags,1,1,1.0,False
+TravelBag,Travel and Sports Bags,1,1,1.0,False
+Triffle,Other,1,1,1.0,False
+Trouser,Casual Trousers,1,1,1.0,False
+Tshirt,T-shirts,1,1,1.0,False
+UMBRELLA,Umbrellas,1,1,1.0,False
+UNDERWEAR,Bodysuits,1,5,0.2,True
+UNISEX,Sunglasses,1,1,1.0,False
+"Underwear, body",Bathrobes,1,5,0.2,True
+VENTIQUATTRORE,Briefcases,1,1,1.0,False
+Vanity Bag,Cosmetic bags,1,1,1.0,False
+WOMAN,Sunglasses,1,2,0.5,True
+Wallet,Wallets,1,1,1.0,False
+"Wallets, card holders",Cardholders,1,2,0.5,True
+Wedges,Espadrilles,1,1,1.0,False
+White,T-shirts,1,1,1.0,False
+ZAINI,Backpacks,1,1,1.0,False
+bags,Shoulder Bags,1,2,0.5,True
+dresses,Midi Skirts,1,1,1.0,False
+flops,Flip flops,1,1,1.0,False
+jeans,Straight fit Jeans,1,1,1.0,False
+jumpsuit,Jumpsuits,1,1,1.0,False
+knitwear,knitwear,1,1,1.0,False
+pants,Straight Leg,1,1,1.0,False
+shirt and blouses,Shirts,1,1,1.0,False
+shoe,Flats,1,1,1.0,False
+shorts handle bags,Short handle Bags,1,1,1.0,False
+skateboard,Sport,1,1,1.0,False
+tops,T-Shirts,1,1,1.0,False
+watch,Devices,1,1,1.0,False
+ČARAPE,"Socks, Stockings and Tights",1,1,1.0,False
+ČIZME,Boots,1,1,1.0,False
+ŠALOVI,Scarves,1,1,1.0,False
+ŠEŠIRI,Panama,1,1,1.0,False
+ŠTIKLE,Pumps,1,1,1.0,False

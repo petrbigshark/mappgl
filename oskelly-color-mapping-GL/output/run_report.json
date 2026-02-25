@@ -1,0 +1,7 @@
+{
+  "input": "l2l.xlsx",
+  "output": "output/Цвета для загрузки l2loskell@gmail.com 19.02.xlsx",
+  "rows_processed": 325,
+  "dry_run": false,
+  "model": "gpt-5-mini"
+}

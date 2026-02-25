@@ -1,0 +1,60 @@
+input:
+  sheet_name: 0         # null = first sheet
+  reason_column: reason
+  brand_column: brand
+  color_column: color
+  storecode_column: storecode
+  reason_filter_substring: "Не найден цвет|Не задано значение обязательного атрибута 10: Цвет"
+
+dedupe:
+  enabled: true
+  unique_by: "brand_color_query"   # make LLM calls only once per unique query
+
+template_output:
+  enabled: true
+  # Output will match the example template columns:
+  # id, objectType, expr, outputValue, matchType, repeatMatching, params, indexNumber, clientEmail, oskellyId
+  objectType_value: "COLOR"
+  matchType_value: "EQUALS"
+  repeatMatching_value: "false"
+  params_value: "{}"
+  indexNumber_start: 1000          # you will override via CLI if needed
+  clientEmail_value: "example@mail.com"  # you will override via CLI
+  oskellyId_value: ""              # keep empty unless you need it
+  filename: "template_output.xlsx"
+
+llm:
+  enabled: true
+  model: "gpt-5-mini"
+  max_retries: 4
+  base_delay_sec: 1.0
+  timeout_sec: 60
+
+allowed_colors:
+  - "Anthracite"
+  - "Beige"
+  - "Black"
+  - "Blue"
+  - "Brown"
+  - "Burgundy"
+  - "Coral"
+  - "Deep blue"
+  - "Fuchsia"
+  - "Gold"
+  - "Green"
+  - "Grey"
+  - "Khaki"
+  - "Light Blue"
+  - "Light Green"
+  - "Multicolour"
+  - "Mustard"
+  - "Orange"
+  - "Other"
+  - "Pink"
+  - "Purple"
+  - "Red"
+  - "Silver"
+  - "Turquoise"
+  - "White"
+  - "Yellow"
+
