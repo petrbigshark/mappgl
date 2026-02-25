@@ -1,0 +1,114 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+import pandas as pd
+
+import orchestrator
+
+
+def test_should_drop_reason_rules() -> None:
+    assert orchestrator.should_drop_reason(" Product with PLU 123 ")
+    assert orchestrator.should_drop_reason("Найдены ошибки при валидации товара: Не указана цена товара")
+    assert orchestrator.should_drop_reason(
+        "Найдены ошибки при валидации товара: Не указана цена товара; Дополнительная ошибка"
+    )
+
+    assert orchestrator.should_drop_reason("Ошибка при публикации товара: random")
+    assert orchestrator.should_drop_reason("Ошибка при обновлении товара: 400 BAD_REQUEST x")
+
+    # Keep BAD_REQUEST/publish rows if color/material is present.
+    assert not orchestrator.should_drop_reason("Ошибка при публикации товара: не найден Цвет")
+    assert not orchestrator.should_drop_reason("Ошибка при обновлении товара: 400 BAD_REQUEST Material missing")
+
+    # Unrelated reasons are kept.
+    assert not orchestrator.should_drop_reason("Не найден бренд с названием 'X'")
+
+
+def test_prefilter_workbook_removes_rows(tmp_path: Path) -> None:
+    in_path = tmp_path / "input.xlsx"
+    out_path = tmp_path / "prefiltered.xlsx"
+
+    df = pd.DataFrame(
+        {
+            "reason": [
+                "Product with PLU 123",
+                "Найдены ошибки при валидации товара: Не указана цена товара",
+                "Ошибка при публикации товара: не найден Цвет",
+                "Не найден бренд с названием 'Test'",
+            ],
+            "brand": ["a", "b", "c", "d"],
+        }
+    )
+
+    with pd.ExcelWriter(in_path, engine="openpyxl") as writer:
+        df.to_excel(writer, sheet_name="Result 1", index=False)
+
+    main_df, main_sheet, stats = orchestrator.prefilter_workbook(in_path, out_path)
+
+    assert main_sheet == "Result 1"
+    assert len(main_df) == 2
+    assert stats["Result 1"]["rows_removed"] == 2
+    assert out_path.exists()
+
+
+def test_run_pipeline_continues_when_one_module_fails(tmp_path: Path, monkeypatch) -> None:
+    input_path = tmp_path / "input.xlsx"
+    pd.DataFrame({"reason": ["x"]}).to_excel(input_path, index=False)
+
+    def fake_prefilter(_in: Path, out: Path):
+        df = pd.DataFrame(
+            {
+                "reason": ["need brand", "need color"],
+                orchestrator.ROW_ID_COL: [1, 2],
+            }
+        )
+        with pd.ExcelWriter(out, engine="openpyxl") as writer:
+            df.to_excel(writer, sheet_name="Result 1", index=False)
+        return df, "Result 1", {"Result 1": {"rows_in": 2, "rows_out": 2, "rows_removed": 0}}
+
+    monkeypatch.setattr(orchestrator, "prefilter_workbook", fake_prefilter)
+    monkeypatch.setattr(
+        orchestrator,
+        "collect_match_stats",
+        lambda _df: {"brand": [1], "color": [2], "material": [], "category": [], "season": [], "size": []},
+    )
+
+    def fail_brand(*_args, **_kwargs):
+        raise orchestrator.PipelineError("brand llm failed")
+
+    monkeypatch.setattr(orchestrator, "run_brand", fail_brand)
+    monkeypatch.setattr(
+        orchestrator,
+        "run_color",
+        lambda *_args, **_kwargs: {"status": "OK", "report": {"rows_processed": 1}},
+    )
+
+    request = {
+        "input_file": str(input_path),
+        "email": "test@example.com",
+        "index_starts": {
+            "brand": 1,
+            "color": 2,
+            "material": 3,
+            "category": 4,
+            "season": 5,
+        },
+        "output_root": str(tmp_path / "runs"),
+        "timezone": "Europe/Tallinn",
+    }
+
+    result = orchestrator.run_pipeline(request)
+
+    assert result["modules"]["brand"]["status"] == "FAILED"
+    assert result["modules"]["color"]["status"] == "OK"
+    assert result["modules"]["material"]["status"] == "NO_MAPPING"
+    assert result["summary"]["has_failures"] is True
+    assert result["summary"]["failed_modules"] == ["brand"]
+    assert "timings" in result
+    assert result["timings"]["total_sec"] is not None
+    assert "modules_sec" in result["timings"]
+    assert set(result["timings"]["modules_sec"].keys()) == set(orchestrator.MODULE_ORDER)
+    assert result["modules"]["brand"]["duration_sec"] is not None
+    assert result["modules"]["color"]["duration_sec"] is not None
+    assert Path(result["report_file"]).exists()
