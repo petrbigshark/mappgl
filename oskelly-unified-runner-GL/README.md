@@ -2,11 +2,18 @@ Oskelly Unified Runner
 
 Короткий запуск: поднять локальный API и отправить один запрос на прогон.
 
+0) Первичная настройка shared venv (один раз)
+
+cd "/Users/petr/Documents/Automatisation Oskelly"
+python3 -m venv GLOBAL/.venv
+source GLOBAL/.venv/bin/activate
+pip install -r GLOBAL/requirements.shared.txt
+
 1) Запуск сервера
 
 export OPENAI_API_KEY="sk-..."
 cd "/Users/petr/Documents/Automatisation Oskelly/GLOBAL/oskelly-unified-runner-GL"
-source .venv/bin/activate
+source ../.venv/bin/activate
 uvicorn server:app --host 127.0.0.1 --port 8000
 
 Сервер держи в отдельной вкладке терминала.

@@ -26,9 +26,19 @@ template_output:
 llm:
   enabled: true
   model: "gpt-5-mini"
-  max_retries: 4
+  # Resource guards:
+  # - max_retries: retries per batch (SDK auto-retries are disabled in code)
+  # - batch_size: values per single LLM request
+  # - max_total_calls: hard limit for number of LLM requests per run
+  max_retries: 1
+  batch_size: 500
+  max_total_calls: 6
+  # Safety check: abort export if almost everything became "Other".
+  max_other_ratio: 0.98
+  # Write raw LLM responses to output/_llm_debug for troubleshooting.
+  debug_enabled: false
   base_delay_sec: 1.0
-  timeout_sec: 60
+  timeout_sec: 300
 
 allowed_colors:
   - "Anthracite"
@@ -57,4 +67,3 @@ allowed_colors:
   - "Turquoise"
   - "White"
   - "Yellow"
-

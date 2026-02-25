@@ -517,6 +517,7 @@ def run_color(
         str(request["email"]),
         "--outdir",
         str(module_out),
+        "--no-versioned-output",
     ]
 
     log_file = module_out / "execution.log"
@@ -533,6 +534,10 @@ def run_color(
         llm_sent_after_dedup = 0
     else:
         m = re.search(r"ONE-SHOT GPT call for\s+(\d+)\s+unique values", stdout or "", flags=re.IGNORECASE)
+        if not m:
+            m = re.search(r"LLM for unresolved values:\s*(\d+)\s*/", stdout or "", flags=re.IGNORECASE)
+        if not m:
+            m = re.search(r"LLM for all values:\s*(\d+)\s*/", stdout or "", flags=re.IGNORECASE)
         if m:
             llm_sent_after_dedup = int(m.group(1))
 

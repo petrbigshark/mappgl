@@ -1,0 +1,28 @@
+app:
+  output_dir: /Users/petr/Documents/Automatisation Oskelly/GLOBAL/unified-output/cuccuinioskelly@gmail.com
+    25.02.2026 v6/materials
+  report_name: run_report.json
+input:
+  sheet_name: Result 1
+  reason_column: reason
+  category_column: category
+  material_column: material
+filter:
+  reason_contains: (?:не найден материал|Не задано значение обязательного атрибута\s*(?:[1-9]|1\d|2[0-5]):\s*Материал)
+llm:
+  model: gpt-5.1
+  max_output_tokens: 300
+references:
+  material_type_ids_xlsx: id_materials.xlsx
+  material_catalog_xlsx: material_types.xlsx
+output_template:
+  columns:
+  - id
+  - objectType
+  - outputValue
+  - expr
+  - matchType
+  - repeatMatching
+  - params
+  - indexNumber
+  - clientEmail
