@@ -53,9 +53,40 @@ PREFILTER_DROP_EQUALS_OR_PREFIX = [
 ]
 
 PREFILTER_KEEP_IF_CONTAINS = ["Цвет", "Материал", "color", "material"]
+PREFILTER_KEEP_REQUIRED_ATTR_IDS = {
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    9,
+    10,
+    14,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    28,
+}
+PREFILTER_KEEP_REQUIRED_ATTR_RE = re.compile(
+    r"не\s+задано\s+значение\s+обязательного\s+атрибута\s*(\d+)\s*:",
+    flags=re.IGNORECASE,
+)
 
 BRAND_REASON_NEEDLE = "Не найден бренд с названием"
 SEASON_REASON_NEEDLE = "Отсутствует конфигурация для сезона с типом"
+SEASON_REQUIRED_ATTR_28_RE = re.compile(
+    r"не\s+задано\s+значение\s+обязательного\s+атрибута\s*28\b",
+    flags=re.IGNORECASE,
+)
 
 
 class PipelineError(RuntimeError):
@@ -115,6 +146,16 @@ def should_drop_reason(reason: Any) -> bool:
         if s_cf.startswith(prefix.casefold()):
             if contains_any_casefold(s, PREFILTER_KEEP_IF_CONTAINS):
                 return False
+
+            match = PREFILTER_KEEP_REQUIRED_ATTR_RE.search(s)
+            if match:
+                try:
+                    attr_id = int(match.group(1))
+                except ValueError:
+                    attr_id = -1
+                if attr_id in PREFILTER_KEEP_REQUIRED_ATTR_IDS:
+                    return False
+
             return True
 
     return False
@@ -273,7 +314,10 @@ def match_season_rows(df: pd.DataFrame) -> List[int]:
     reason_col = resolve_column(df, "reason")
     if not reason_col:
         return []
-    mask = df[reason_col].astype(str).str.contains(SEASON_REASON_NEEDLE, case=False, na=False)
+    reasons = df[reason_col].astype(str)
+    mask = reasons.str.contains(SEASON_REASON_NEEDLE, case=False, na=False) | reasons.str.contains(
+        SEASON_REQUIRED_ATTR_28_RE, na=False, regex=True
+    )
     return row_ids_from_mask(df, mask)
 
 

@@ -4,7 +4,7 @@ input:
   brand_column: brand
   color_column: color
   storecode_column: storecode
-  reason_filter_substring: "Не найден цвет|Не задано значение обязательного атрибута 10: Цвет"
+  reason_filter_substring: "(?i)(?:не найден цвет|не задано значение обязательного атрибута\\s*10\\s*:\\s*(?:цвет|color))"
 
 dedupe:
   enabled: true

@@ -13,10 +13,15 @@ from openpyxl.styles import Font
 
 
 NEEDLE_PREFIX = "Отсутствует конфигурация для сезона с типом"
+REQUIRED_ATTR_28_PREFIX = "Не задано значение обязательного атрибута 28"
 # Example in reason: "Отсутствует конфигурация для сезона с типом '25SS' и годом 'null'; ..."
 SEASON_QUOTE_RE = re.compile(
     r"Отсутствует конфигурация для сезона с типом\s*'([^']+)'",
     flags=re.IGNORECASE
+)
+ATTR_28_TOKEN_RE = re.compile(
+    r"не\s+задано\s+значение\s+обязательного\s+атрибута\s*28\s*:\s*['\"]?([^'\";\r\n]+?)['\"]?(?:;|$)",
+    flags=re.IGNORECASE,
 )
 
 OUTPUT_HEADERS = [
@@ -65,15 +70,33 @@ def load_regex_mapping(mapping_xlsx: str) -> List[Tuple[re.Pattern, str]]:
 
 def extract_season_tokens_from_reason(reason: str) -> List[str]:
     """
-    Return tokens found in single quotes after "...с типом 'X'".
-    Usually one token, but we support multiple matches.
+    Return tokens from:
+    - "...с типом 'X'"
+    - "Не задано значение обязательного атрибута 28: X"
     """
     if not reason:
         return []
     s = str(reason)
-    if NEEDLE_PREFIX.lower() not in s.lower():
-        return []
-    return [m.group(1).strip() for m in SEASON_QUOTE_RE.finditer(s) if m.group(1).strip()]
+    s_l = s.lower()
+
+    tokens: List[str] = []
+    if NEEDLE_PREFIX.lower() in s_l:
+        tokens.extend(m.group(1).strip() for m in SEASON_QUOTE_RE.finditer(s) if m.group(1).strip())
+
+    if REQUIRED_ATTR_28_PREFIX.lower() in s_l:
+        tokens.extend(m.group(1).strip() for m in ATTR_28_TOKEN_RE.finditer(s) if m.group(1).strip())
+
+    # De-duplicate while preserving order.
+    seen = set()
+    unique_tokens: List[str] = []
+    for token in tokens:
+        key = token.casefold()
+        if key in seen:
+            continue
+        seen.add(key)
+        unique_tokens.append(token)
+
+    return unique_tokens
 
 
 def map_by_reference(token: str, ref: List[Tuple[re.Pattern, str]]) -> Optional[str]:

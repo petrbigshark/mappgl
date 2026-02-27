@@ -20,6 +20,22 @@ def test_should_drop_reason_rules() -> None:
     # Keep BAD_REQUEST/publish rows if color/material is present.
     assert not orchestrator.should_drop_reason("Ошибка при публикации товара: не найден Цвет")
     assert not orchestrator.should_drop_reason("Ошибка при обновлении товара: 400 BAD_REQUEST Material missing")
+    assert not orchestrator.should_drop_reason(
+        "Ошибка при обновлении товара: 400 BAD_REQUEST "
+        "\"Не задано значение обязательного атрибута 24: Shirt fabric\""
+    )
+    assert not orchestrator.should_drop_reason(
+        "Ошибка при обновлении товара: 400 BAD_REQUEST "
+        "\"Не задано значение обязательного атрибута 10: Color\""
+    )
+    assert not orchestrator.should_drop_reason(
+        "Ошибка при обновлении товара: 400 BAD_REQUEST "
+        "\"Не задано значение обязательного атрибута 28: Some value\""
+    )
+    assert orchestrator.should_drop_reason(
+        "Ошибка при обновлении товара: 400 BAD_REQUEST "
+        "\"Не задано значение обязательного атрибута 27: Some value\""
+    )
 
     # Unrelated reasons are kept.
     assert not orchestrator.should_drop_reason("Не найден бренд с названием 'X'")
@@ -50,6 +66,48 @@ def test_prefilter_workbook_removes_rows(tmp_path: Path) -> None:
     assert len(main_df) == 2
     assert stats["Result 1"]["rows_removed"] == 2
     assert out_path.exists()
+
+
+def test_match_material_rows_by_ids_and_material_words() -> None:
+    df = pd.DataFrame(
+        {
+            "reason": [
+                "Ошибка при обновлении товара: 400 BAD_REQUEST "
+                "\"Не задано значение обязательного атрибута 24: Shirt fabric\"",
+                "Ошибка при обновлении товара: 400 BAD_REQUEST "
+                "\"Не задано значение обязательного атрибута 10: Color\"",
+                "Не найден материал",
+                "Ошибка при обновлении товара: 400 BAD_REQUEST "
+                "\"Не задано значение обязательного атрибута 28: Some value\"",
+                "Ошибка при публикации товара: "
+                "\"Не задано значение обязательного атрибута 17: Fabric\"",
+                "Ошибка при обновлении товара: 400 BAD_REQUEST "
+                "\"Не задано значение обязательного атрибута 10: Material\"",
+                "Ошибка при обновлении товара: 400 BAD_REQUEST "
+                "\"Не задано значение обязательного атрибута 28: материал\"",
+            ]
+        }
+    )
+
+    matched = orchestrator.match_material_rows(df)
+    assert matched == [1, 3, 5, 6, 7]
+
+
+def test_match_season_rows_includes_required_attr_28() -> None:
+    df = pd.DataFrame(
+        {
+            "reason": [
+                "Отсутствует конфигурация для сезона с типом '25SS' и годом 'null'",
+                "Ошибка при обновлении товара: 400 BAD_REQUEST "
+                "\"Не задано значение обязательного атрибута 28: 24AW\"",
+                "Ошибка при обновлении товара: 400 BAD_REQUEST "
+                "\"Не задано значение обязательного атрибута 24: Shirt fabric\"",
+            ]
+        }
+    )
+
+    matched = orchestrator.match_season_rows(df)
+    assert matched == [1, 2]
 
 
 def test_run_pipeline_continues_when_one_module_fails(tmp_path: Path, monkeypatch) -> None:
