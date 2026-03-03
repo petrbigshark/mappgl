@@ -35,6 +35,31 @@ def ensure_dir(p: Path) -> None:
     p.mkdir(parents=True, exist_ok=True)
 
 
+def _sheet_key(name: Any) -> str:
+    return "".join(str(name or "").split()).casefold()
+
+
+def resolve_input_sheet(path: Path, preferred_sheet: Any = None) -> str:
+    with pd.ExcelFile(path) as xls:
+        sheet_names = list(xls.sheet_names)
+    if not sheet_names:
+        raise ValueError(f"No sheets in input file: {path}")
+
+    by_key = {_sheet_key(name): name for name in sheet_names}
+    if isinstance(preferred_sheet, str) and preferred_sheet.strip():
+        hit = by_key.get(_sheet_key(preferred_sheet))
+        if hit:
+            return hit
+
+    hit = by_key.get(_sheet_key("Result 1"))
+    if hit:
+        return hit
+
+    if isinstance(preferred_sheet, int) and 0 <= preferred_sheet < len(sheet_names):
+        return sheet_names[preferred_sheet]
+    return sheet_names[0]
+
+
 def next_versioned_output_dir(base_dir: Path, email: str, date_str: str) -> tuple[Path, int]:
     ensure_dir(base_dir)
     version = 1
@@ -117,7 +142,8 @@ def main() -> None:
     # -------------------------
     # READ EXCEL
     # -------------------------
-    sheet = cfg["input"].get("sheet_name", 0)
+    preferred_sheet = cfg["input"].get("sheet_name", "Result 1")
+    sheet = resolve_input_sheet(input_path, preferred_sheet)
     df = pd.read_excel(input_path, sheet_name=sheet)
 
     reason_col = cfg["input"]["reason_column"]
@@ -247,6 +273,7 @@ def main() -> None:
     # -------------------------
     report = {
         "input": str(input_path),
+        "sheet_name": sheet,
         "output": str(out_path),
         "rows_processed": n,
         "dry_run": bool(args.dry_run),

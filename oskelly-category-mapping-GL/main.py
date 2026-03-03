@@ -29,6 +29,31 @@ def read_yaml(path: Path) -> Dict[str, Any]:
         return yaml.safe_load(f)
 
 
+def _sheet_key(name: Any) -> str:
+    return "".join(str(name or "").split()).casefold()
+
+
+def resolve_input_sheet(path: Path, preferred_sheet: Any = None) -> str:
+    with pd.ExcelFile(path) as xls:
+        sheet_names = list(xls.sheet_names)
+    if not sheet_names:
+        die(f"No sheets in input file: {path}")
+
+    by_key = {_sheet_key(name): name for name in sheet_names}
+    if isinstance(preferred_sheet, str) and preferred_sheet.strip():
+        hit = by_key.get(_sheet_key(preferred_sheet))
+        if hit:
+            return hit
+
+    hit = by_key.get(_sheet_key("Result 1"))
+    if hit:
+        return hit
+
+    if isinstance(preferred_sheet, int) and 0 <= preferred_sheet < len(sheet_names):
+        return sheet_names[preferred_sheet]
+    return sheet_names[0]
+
+
 def normalize_space(s: str) -> str:
     return re.sub(r"\s+", " ", str(s or "").strip())
 
@@ -296,7 +321,10 @@ def main() -> None:
     in_path = Path(args.input)
     if not in_path.exists():
         die(f"Input not found: {in_path}")
-    df_in = pd.read_excel(in_path)
+    preferred_sheet = cfg.get("input", {}).get("sheet_name", "Result 1")
+    sheet_name = resolve_input_sheet(in_path, preferred_sheet)
+    df_in = pd.read_excel(in_path, sheet_name=sheet_name)
+    report["args"]["sheet_name"] = sheet_name
 
     def col(name: str) -> Optional[str]:
         want = cfg["input"]["columns"][name]

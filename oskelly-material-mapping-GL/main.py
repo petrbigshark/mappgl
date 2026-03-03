@@ -28,6 +28,31 @@ def load_config(path: Path) -> Dict[str, Any]:
         return yaml.safe_load(f)
 
 
+def _sheet_key(name: Any) -> str:
+    return "".join(str(name or "").split()).casefold()
+
+
+def resolve_input_sheet(path: Path, preferred_sheet: Any = None) -> str:
+    with pd.ExcelFile(path) as xls:
+        sheet_names = list(xls.sheet_names)
+    if not sheet_names:
+        raise SystemExit(f"Во входном файле нет листов: {path}")
+
+    by_key = {_sheet_key(name): name for name in sheet_names}
+    if isinstance(preferred_sheet, str) and preferred_sheet.strip():
+        hit = by_key.get(_sheet_key(preferred_sheet))
+        if hit:
+            return hit
+
+    hit = by_key.get(_sheet_key("Result 1"))
+    if hit:
+        return hit
+
+    if isinstance(preferred_sheet, int) and 0 <= preferred_sheet < len(sheet_names):
+        return sheet_names[preferred_sheet]
+    return sheet_names[0]
+
+
 def load_material_type_ids(path: Path) -> Dict[str, int]:
     df = pd.read_excel(path)
     if not {"id", "name"}.issubset(df.columns):
@@ -188,7 +213,7 @@ def main() -> None:
 
     cfg = load_config(Path(args.config))
     input_cfg = cfg.get("input", {})
-    sheet_name = input_cfg.get("sheet_name") or 0
+    preferred_sheet = input_cfg.get("sheet_name", "Result 1")
     reason_col = input_cfg.get("reason_column", "reason")
     category_col = input_cfg.get("category_column", "category")
     material_col = input_cfg.get("material_column", "material")
@@ -209,7 +234,8 @@ def main() -> None:
     out_dir = Path(app_cfg.get("output_dir", "output"))
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    df_input = pd.read_excel(args.input, sheet_name=sheet_name)
+    resolved_sheet = resolve_input_sheet(Path(args.input), preferred_sheet)
+    df_input = pd.read_excel(args.input, sheet_name=resolved_sheet)
     if reason_contains:
         mask = (
             df_input[reason_col]
@@ -293,6 +319,7 @@ def main() -> None:
     # ---------- ОТЧЁТ ----------
     report = {
         "input_file": Path(args.input).name,
+        "sheet_name": resolved_sheet,
         "rows_total": int(len(df_input)),
         "rows_after_filter": int(len(df_filtered)),
         "rows_final_output": int(len(out)),

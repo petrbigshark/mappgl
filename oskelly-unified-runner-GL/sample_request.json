@@ -1,5 +1,5 @@
 {
-  "input_file": "/Users/petr/Downloads/3kicks17feb (3).xlsx",
+  "input_file": "/Users/petr/MyPrograms/Automatisation Oskelly/GLOBAL/oskelly-unified-runner-GL/ccc.xlsx",
   "email": "cuccuinioskelly@gmail.com",
   "index_starts": {
     "brand": 1000,
@@ -8,8 +8,8 @@
     "category": 4000,
     "season": 5000
   },
-  "output_root": "/Users/petr/Documents/Automatisation Oskelly/GLOBAL/unified-output",
-  "timezone": "Europe/Tallinn",
+  "output_root": "/Users/petr/MyPrograms/Automatisation Oskelly/GLOBAL/unified-output",
+  "timezone": "Europe/Moscow",
   "require_llm_success": true,
   "use_llm_brand": true,
   "use_llm_season": false,

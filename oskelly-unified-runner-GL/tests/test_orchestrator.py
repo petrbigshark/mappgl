@@ -16,6 +16,13 @@ def test_should_drop_reason_rules() -> None:
 
     assert orchestrator.should_drop_reason("Ошибка при публикации товара: random")
     assert orchestrator.should_drop_reason("Ошибка при обновлении товара: 400 BAD_REQUEST x")
+    assert orchestrator.should_drop_reason(
+        'Ошибка при обновлении товара: 500 INTERNAL_SERVER_ERROR "could not extract ResultSet"'
+    )
+    assert orchestrator.should_drop_reason(
+        "Для категории 'Браслеты' не найден тип размера 'INT'; "
+        'Ошибка при обновлении товара: 500 INTERNAL_SERVER_ERROR "could not extract ResultSet"'
+    )
 
     # Keep BAD_REQUEST/publish rows if color/material is present.
     assert not orchestrator.should_drop_reason("Ошибка при публикации товара: не найден Цвет")
@@ -50,10 +57,11 @@ def test_prefilter_workbook_removes_rows(tmp_path: Path) -> None:
             "reason": [
                 "Product with PLU 123",
                 "Найдены ошибки при валидации товара: Не указана цена товара",
+                'Ошибка при обновлении товара: 500 INTERNAL_SERVER_ERROR "could not extract ResultSet"',
                 "Ошибка при публикации товара: не найден Цвет",
                 "Не найден бренд с названием 'Test'",
             ],
-            "brand": ["a", "b", "c", "d"],
+            "brand": ["a", "b", "c", "d", "e"],
         }
     )
 
@@ -64,8 +72,43 @@ def test_prefilter_workbook_removes_rows(tmp_path: Path) -> None:
 
     assert main_sheet == "Result 1"
     assert len(main_df) == 2
-    assert stats["Result 1"]["rows_removed"] == 2
+    assert stats["Result 1"]["rows_removed"] == 3
     assert out_path.exists()
+
+
+def test_prefilter_deleted_rows_aggregates_only_by_reason(tmp_path: Path) -> None:
+    in_path = tmp_path / "input.xlsx"
+    out_path = tmp_path / "prefiltered.xlsx"
+
+    repeated_500 = 'Ошибка при обновлении товара: 500 INTERNAL_SERVER_ERROR "could not extract ResultSet"'
+    df = pd.DataFrame(
+        {
+            "storecode": ["100", "101", "102", "103"],
+            "reason": [
+                repeated_500,
+                repeated_500,  # same reason, different row
+                "Product with PLU 123",
+                "Не найден бренд с названием 'Test'",
+            ],
+            "brand": ["a", "b", "c", "d"],
+        }
+    )
+
+    with pd.ExcelWriter(in_path, engine="openpyxl") as writer:
+        df.to_excel(writer, sheet_name="Result 1", index=False)
+
+    _main_df, _main_sheet, _stats = orchestrator.prefilter_workbook(in_path, out_path)
+    deleted_rows_path = out_path.parent / "deleted_rows.xlsx"
+    deleted = pd.read_excel(deleted_rows_path)
+
+    assert deleted_rows_path.exists()
+    assert "reason" in deleted.columns
+    assert "Число удалённых строк" in deleted.columns
+    assert len(deleted) == 2
+
+    row_500 = deleted.loc[deleted["reason"] == repeated_500]
+    assert len(row_500) == 1
+    assert int(row_500.iloc[0]["Число удалённых строк"]) == 2
 
 
 def test_match_material_rows_by_ids_and_material_words() -> None:

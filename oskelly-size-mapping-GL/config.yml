@@ -101,7 +101,8 @@ classification:
 
 output:
   outdir: "output"
-  result_filename_template: "Размеры для маппинга {input_stem} {date}.xlsx"
+  result_filename_template: "Размеры для маппинга {name_key} {date}.xlsx"
+  errors_sheet_name: "Ошибки"
   category_map_filename: "category_mapping.xlsx"
   unmatched_brands_filename: "unmatched_brands.xlsx"
   report_filename: "run_report.json"

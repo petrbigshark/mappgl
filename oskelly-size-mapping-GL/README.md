@@ -14,14 +14,35 @@
    - все остальные группы пропускает.
 4. Берёт уникальные `category` и классифицирует их в `CLOTHING | SHOES | OTHER`
    (через LLM или heuristic fallback).
-5. Удаляет `OTHER` и оставляет только `CLOTHING/SHOES`.
-6. Для каждой строки ищет бренд в нужном справочнике:
+5. Оставляет `CLOTHING`, `SHOES` и `OTHER`.
+6. Для строк `CLOTHING/SHOES` ищет бренд в нужном справочнике:
    - `CLOTHING` -> `Справочник одежда.xlsx`
    - `SHOES` -> `Справочник обувь.xlsx`
+   Для `OTHER` ставит `sizeTypeMapped = OTHER`.
 7. Добавляет в итог:
-   - `sizeCategory` (что определилось: CLOTHING/SHOES),
-   - `sizeTypeMapped` (значение `sizetype` из справочника по бренду).
+   - `sizeCategory` (что определилось: `CLOTHING` / `SHOES` / `OTHER`),
+   - `sizeTypeMapped` (`sizetype` из справочника для `CLOTHING/SHOES`, либо `OTHER`).
 8. Пишет результат и отчёты в `output/<input_stem> <dd.mm.yyyy> vN/`.
+
+## Блок-схема
+
+```mermaid
+flowchart TD
+    A["Входной Excel"] --> B["Выбор листа: 'Result 1' или первый лист"]
+    B --> C["Фильтр по reason (regex)"]
+    C --> D["Фильтр по parentcategory (exclude kids)"]
+    D --> E["Классификация category: CLOTHING/SHOES/OTHER"]
+    E --> F["Оставляем CLOTHING/SHOES/OTHER"]
+    F --> G["Маппинг бренда: CLOTHING/SHOES по справочникам, OTHER -> OTHER"]
+    G --> H["Добавляем sizeCategory + sizeTypeMapped"]
+    H --> I["Сортировка по reason (А→Я)"]
+    I --> J["Поиск 3 denim-паттернов: брюки / юбки / с дробью"]
+    J --> K["Sheet1: все строки + подсветка найденных строк"]
+    J --> L["Лист 'Ошибки': только 3 категории + количество ошибок"]
+    K --> M["Размеры для маппинга <email> <date>.xlsx"]
+    L --> M
+    M --> N["run_report.json + category_mapping.xlsx + unmatched_brands.xlsx"]
+```
 
 ## Установка
 
@@ -38,7 +59,8 @@ pip install -r requirements.txt
 ```bash
 export OPENAI_API_KEY="..."
 python3 main.py \
-  --input "cuccini.xlsx"
+  --input "cuccini.xlsx" \
+  --email "cuccuinioskelly@gmail.com"
 ```
 
 Скрипт сам ищет справочники `Справочник одежда.xlsx` и `Справочник обувь.xlsx`
@@ -52,6 +74,7 @@ python3 main.py \
 ```bash
 python3 main.py \
   --input "/Users/petr/Downloads/Пример файла с ошибками.xlsx" \
+  --email "cuccuinioskelly@gmail.com" \
   --dry-run
 ```
 
@@ -60,13 +83,14 @@ python3 main.py \
 ```bash
 python3 main.py \
   --input "cuccini.xlsx" \
+  --email "cuccuinioskelly@gmail.com" \
   --clothing-dict "/path/Справочник одежда.xlsx" \
   --shoes-dict "/path/Справочник обувь.xlsx"
 ```
 
 ## Выходные файлы
 
-- `Размеры для маппинга <input_stem> <dd.mm.yyyy>.xlsx` — итоговый файл
+- `Размеры для маппинга <email> <dd.mm.yyyy>.xlsx` (если `--email` не передан, используется `<input_stem>`) — итоговый файл
 - `category_mapping.xlsx` — как классифицировались уникальные категории
 - `unmatched_brands.xlsx` — бренды без найденного `sizetype` (если есть)
 - `run_report.json` — статистика обработки

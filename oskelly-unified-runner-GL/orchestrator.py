@@ -80,6 +80,23 @@ PREFILTER_KEEP_REQUIRED_ATTR_RE = re.compile(
     r"не\s+задано\s+значение\s+обязательного\s+атрибута\s*(\d+)\s*:",
     flags=re.IGNORECASE,
 )
+PREFILTER_DROP_UPDATE_500_RE = re.compile(
+    r"ошибка\s*при\s*обновлении\s*товара:\s*500\s+internal_server_error",
+    flags=re.IGNORECASE,
+)
+DELETED_ROWS_TEMPLATE_COLUMNS = [
+    "storecode",
+    "reason",
+    "brand",
+    "parentcategory",
+    "category",
+    "color",
+    "material",
+    "sizetype",
+    "sizes",
+    "description",
+]
+DELETED_ROWS_COUNT_COLUMN = "Число удалённых строк"
 
 BRAND_REASON_NEEDLE = "Не найден бренд с названием"
 SEASON_REASON_NEEDLE = "Отсутствует конфигурация для сезона с типом"
@@ -135,6 +152,10 @@ def should_drop_reason(reason: Any) -> bool:
     if not s:
         return False
 
+    # 500 INTERNAL_SERVER_ERROR rows are non-actionable for mapping and must be prefiltered.
+    if PREFILTER_DROP_UPDATE_500_RE.search(s):
+        return True
+
     s_cf = s.casefold()
 
     for needle in PREFILTER_DROP_EQUALS_OR_PREFIX:
@@ -176,6 +197,47 @@ def next_versioned_run_dir(base_dir: Path, email: str, timezone: str) -> Path:
         version += 1
 
 
+def to_deleted_rows_template(df: pd.DataFrame) -> pd.DataFrame:
+    out: Dict[str, Any] = {}
+    for wanted in DELETED_ROWS_TEMPLATE_COLUMNS:
+        resolved = resolve_column(df, wanted)
+        if resolved is None:
+            out[wanted] = ""
+        else:
+            out[wanted] = df[resolved]
+    return pd.DataFrame(out)
+
+
+def summarize_deleted_rows(frames: List[pd.DataFrame]) -> pd.DataFrame:
+    cols = list(DELETED_ROWS_TEMPLATE_COLUMNS) + [DELETED_ROWS_COUNT_COLUMN]
+    if not frames:
+        return pd.DataFrame(columns=cols)
+
+    merged = pd.concat(frames, ignore_index=True)
+    for col in DELETED_ROWS_TEMPLATE_COLUMNS:
+        merged[col] = merged[col].fillna("").astype(str).map(normalize_text)
+
+    reason_col = "reason"
+    if reason_col not in merged.columns:
+        return pd.DataFrame(columns=cols)
+
+    # Aggregate only by reason; other columns are representative values from the first row.
+    counts = (
+        merged.groupby([reason_col], dropna=False, as_index=False)
+        .size()
+        .rename(columns={"size": DELETED_ROWS_COUNT_COLUMN})
+    )
+    representatives = merged.drop_duplicates(subset=[reason_col], keep="first")
+    grouped = counts.merge(representatives, on=reason_col, how="left")
+    grouped = grouped[DELETED_ROWS_TEMPLATE_COLUMNS + [DELETED_ROWS_COUNT_COLUMN]]
+    grouped = grouped.sort_values(
+        by=[DELETED_ROWS_COUNT_COLUMN, "reason"],
+        ascending=[False, True],
+        kind="stable",
+    ).reset_index(drop=True)
+    return grouped
+
+
 def prefilter_workbook(input_path: Path, output_path: Path) -> Tuple[pd.DataFrame, str, Dict[str, Any]]:
     xls = pd.ExcelFile(input_path)
     sheet_names = list(xls.sheet_names)
@@ -185,6 +247,7 @@ def prefilter_workbook(input_path: Path, output_path: Path) -> Tuple[pd.DataFram
     per_sheet: Dict[str, Any] = {}
     main_sheet_name: Optional[str] = None
     main_df: Optional[pd.DataFrame] = None
+    deleted_rows_raw: List[pd.DataFrame] = []
 
     with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
         for sheet_name in sheet_names:
@@ -207,6 +270,9 @@ def prefilter_workbook(input_path: Path, output_path: Path) -> Tuple[pd.DataFram
             df_out = df.loc[~drop_mask].copy()
             df_out.to_excel(writer, sheet_name=sheet_name, index=False)
 
+            if bool(drop_mask.any()):
+                deleted_rows_raw.append(to_deleted_rows_template(df.loc[drop_mask].copy()))
+
             per_sheet[sheet_name] = {
                 "reason_col_found": True,
                 "reason_col": str(reason_col),
@@ -218,6 +284,14 @@ def prefilter_workbook(input_path: Path, output_path: Path) -> Tuple[pd.DataFram
             if main_df is None:
                 main_df = df_out.copy()
                 main_sheet_name = sheet_name
+
+    deleted_rows_summary = summarize_deleted_rows(deleted_rows_raw)
+    deleted_rows_path = output_path.parent / "deleted_rows.xlsx"
+    deleted_rows_summary.to_excel(deleted_rows_path, index=False)
+
+    per_sheet["_deleted_rows_file"] = str(deleted_rows_path)
+    per_sheet["_deleted_rows_unique"] = int(len(deleted_rows_summary))
+    per_sheet["_deleted_rows_total"] = int(deleted_rows_summary[DELETED_ROWS_COUNT_COLUMN].sum()) if not deleted_rows_summary.empty else 0
 
     if main_df is None or main_sheet_name is None:
         raise PipelineError("Не найден лист с колонкой reason после prefilter.")
@@ -764,6 +838,8 @@ def run_size(
         "main.py",
         "--input",
         str(prefiltered_input),
+        "--email",
+        str(request["email"]),
         "--outdir",
         str(module_out),
     ]
@@ -1043,6 +1119,7 @@ def run_pipeline(request: Dict[str, Any], log: Optional[Callable[[str], None]] =
             "run_dir": str(run_dir),
             "input_file": str(input_file),
             "prefiltered_input": str(prefiltered_input),
+            "deleted_rows_file": str(run_dir / "deleted_rows.xlsx"),
             "main_sheet": main_sheet_name,
         },
         "request": {

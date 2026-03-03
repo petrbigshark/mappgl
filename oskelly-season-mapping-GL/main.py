@@ -165,9 +165,33 @@ def get_versioned_output_dir(base_output: Path, email: str, date_str: str) -> Pa
     return new_dir
 
 
-def read_input_sheet(input_xlsx: str) -> Tuple[openpyxl.Workbook, openpyxl.worksheet.worksheet.Worksheet, Dict[str, int]]:
+def _sheet_key(name: str) -> str:
+    return "".join(str(name or "").split()).casefold()
+
+
+def resolve_input_sheet_name(sheet_names: List[str], preferred_sheet: Optional[str] = "Result 1") -> str:
+    if not sheet_names:
+        raise ValueError("Во входном файле нет листов.")
+
+    by_key = {_sheet_key(name): name for name in sheet_names}
+    if preferred_sheet:
+        hit = by_key.get(_sheet_key(preferred_sheet))
+        if hit:
+            return hit
+
+    hit = by_key.get(_sheet_key("Result 1"))
+    if hit:
+        return hit
+    return sheet_names[0]
+
+
+def read_input_sheet(
+    input_xlsx: str,
+    preferred_sheet: Optional[str] = "Result 1",
+) -> Tuple[openpyxl.Workbook, openpyxl.worksheet.worksheet.Worksheet, Dict[str, int]]:
     wb = openpyxl.load_workbook(input_xlsx)
-    ws = wb[wb.sheetnames[0]]
+    resolved_sheet = resolve_input_sheet_name(wb.sheetnames, preferred_sheet)
+    ws = wb[resolved_sheet]
 
     header_map: Dict[str, int] = {}
     for c in range(1, ws.max_column + 1):
@@ -284,6 +308,7 @@ def main():
     ap.add_argument("--output-dir", default="output", help="Корневая output-папка")
     ap.add_argument("--use-llm", action="store_true", help="Если включить — при промахе по справочнику спросим LLM")
     ap.add_argument("--llm-model", default="gpt-5", help="Модель для LLM (если включён --use-llm)")
+    ap.add_argument("--sheet-name", default="Result 1", help="Предпочитаемый лист входного файла (fallback: первый лист)")
 
     args = ap.parse_args()
 
@@ -297,7 +322,7 @@ def main():
         )
 
     ref_map = load_regex_mapping(str(mapping_path))
-    wb, ws, header_map = read_input_sheet(args.input)
+    wb, ws, header_map = read_input_sheet(args.input, preferred_sheet=args.sheet_name)
 
     records, errors = build_records_from_input(
         ws=ws,

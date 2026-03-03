@@ -70,6 +70,27 @@ def next_version_folder(base_dir: Path, email: str, date_str: str) -> Path:
         v += 1
 
 
+def _sheet_key(name: str) -> str:
+    return "".join(str(name or "").split()).casefold()
+
+
+def resolve_input_sheet(path: Path, preferred_sheet: str = "Result 1") -> str:
+    with pd.ExcelFile(path) as xls:
+        sheet_names = list(xls.sheet_names)
+    if not sheet_names:
+        raise SystemExit(f"Во входном файле нет листов: {path}")
+
+    by_key = {_sheet_key(name): name for name in sheet_names}
+    hit = by_key.get(_sheet_key(preferred_sheet))
+    if hit:
+        return hit
+
+    hit = by_key.get(_sheet_key("Result 1"))
+    if hit:
+        return hit
+    return sheet_names[0]
+
+
 def build_reference(brands_id_path: Path):
     brands_df = pd.read_excel(brands_id_path)
     if "id" not in brands_df.columns or "name" not in brands_df.columns:
@@ -373,7 +394,8 @@ def main():
     out_folder = next_version_folder(out_base, args.email, date_str)
     out_folder.mkdir(parents=True, exist_ok=False)
 
-    df = pd.read_excel(input_path)
+    sheet_name = resolve_input_sheet(input_path, preferred_sheet="Result 1")
+    df = pd.read_excel(input_path, sheet_name=sheet_name)
     if "reason" not in df.columns or "brand" not in df.columns:
         raise SystemExit("В input-файле должны быть колонки reason и brand")
 
