@@ -1,7 +1,0 @@
-{
-  "input": "/Users/petr/Documents/Automatisation Oskelly/GLOBAL/unified-output/cuccuinioskelly@gmail.com 25.02.2026 v4/prefiltered_input.xlsx",
-  "output": "/Users/petr/Documents/Automatisation Oskelly/GLOBAL/unified-output/cuccuinioskelly@gmail.com 25.02.2026 v4/modules/color/Цвета для загрузки cuccuinioskelly@gmail.com 25.02.xlsx",
-  "rows_processed": 146,
-  "dry_run": false,
-  "model": "gpt-5-mini"
-}

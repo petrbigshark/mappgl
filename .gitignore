@@ -9,3 +9,12 @@ venv/
 dist/
 build/
 *.log
+
+# Runtime outputs
+oskelly-brand-mapping-GL/output/
+oskelly-color-mapping-GL/output/
+oskelly-material-mapping-GL/output/
+oskelly-category-mapping-GL/output/
+oskelly-season-mapping-GL/output/
+oskelly-size-mapping-GL/output/
+unified-output/
