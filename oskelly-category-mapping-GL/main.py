@@ -467,10 +467,18 @@ def main() -> None:
         max_items_per_request=int(cfg["llm"]["max_items_per_request"]),
         request_timeout_sec=int(cfg["llm"]["request_timeout_sec"]),
         prompt_version=str(cfg["llm"]["prompt_version"]),
+        debug_log_path=str(run_dir / "llm_debug.jsonl"),
     )
     mapper = ResponsesFullDictMapper(llm_cfg)
+    report["llm"]["debug_log_file"] = str(run_dir / "llm_debug.jsonl")
+    print(f"LLM debug log: {run_dir / 'llm_debug.jsonl'}")
 
-    def run_items(items_meta: List[Tuple[str, str, str, bool]], candidates_override: Optional[Dict[str, List[str]]] = None) -> Dict[Tuple[str, str], str]:
+    def run_items(
+        items_meta: List[Tuple[str, str, str, bool]],
+        stage: str,
+        candidates_override: Optional[Dict[str, List[str]]] = None,
+        stage_meta: Optional[Dict[str, Any]] = None,
+    ) -> Dict[Tuple[str, str], str]:
         """
         items_meta: list of (group, expr, text, used_desc_flag)
         returns (group, expr) -> chosen full_path
@@ -500,9 +508,24 @@ def main() -> None:
             # Batch split
             results_all = []
             chunk = max(1, llm_cfg.max_items_per_request)
-            for i in range(0, len(payload), chunk):
+            total_chunks = (len(payload) + chunk - 1) // chunk
+            cache_hits_before_stage = len(uniq) - len(payload)
+            for batch_no, i in enumerate(range(0, len(payload), chunk), start=1):
                 part = payload[i:i+chunk]
-                results_all.extend(mapper.map(candidates_override or candidates_by_group, part))
+                results_all.extend(
+                    mapper.map(
+                        candidates_override or candidates_by_group,
+                        part,
+                        debug_context={
+                            "stage": stage,
+                            "chunk_index": batch_no,
+                            "chunk_total": total_chunks,
+                            "payload_items_total": len(payload),
+                            "cache_hits_before_stage": cache_hits_before_stage,
+                            **(stage_meta or {}),
+                        },
+                    )
+                )
 
             by_key = {r.key: r.full_path for r in results_all}
             with cache_path.open("a", encoding="utf-8") as f:
@@ -537,8 +560,8 @@ def main() -> None:
     report["llm"]["unique_stage1"] = len({(g, e, t) for g, e, t, _ in items_stage1})
     report["llm"]["unique_force_desc"] = len({(g, e, t) for g, e, t, _ in items_force})
 
-    fp_stage1 = run_items(items_stage1)
-    fp_force = run_items(items_force)
+    fp_stage1 = run_items(items_stage1, stage="stage1")
+    fp_force = run_items(items_force, stage="force_desc")
 
     # Anchor-based LLM: when seed returned a non-leaf value that exists inside dictionary paths,
     # we narrow candidates to only those paths that contain that anchor segment.
@@ -558,7 +581,18 @@ def main() -> None:
             sub = find_anchor_candidates(g, anchor)
             cand_override = {"WOMEN": candidates_by_group["WOMEN"], "MEN": candidates_by_group["MEN"], "LIFESTYLE": candidates_by_group["LIFESTYLE"]}
             cand_override[g] = sorted(sub)
-            anchor_maps.append(run_items(items, candidates_override=cand_override))
+            anchor_maps.append(
+                run_items(
+                    items,
+                    stage="anchor",
+                    candidates_override=cand_override,
+                    stage_meta={
+                        "group": g,
+                        "anchor": anchor,
+                        "override_candidates": len(cand_override.get(g, [])),
+                    },
+                )
+            )
     fp_anchor = {}
     for m in anchor_maps:
         fp_anchor.update(m)
@@ -589,7 +623,7 @@ def main() -> None:
         g, expr, desc = r["_group"], r["expr"], r["description"]
         items_fb.append((g, expr, f"{expr} | {desc}".strip(), True))
 
-    fp_fb = run_items(items_fb)
+    fp_fb = run_items(items_fb, stage="depth_fallback")
     apply_fp(fp_fb, True)
 
     # params with descContains if used desc

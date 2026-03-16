@@ -15,14 +15,20 @@ from openpyxl.styles import Font
 NEEDLE_PREFIX = "Отсутствует конфигурация для сезона с типом"
 REQUIRED_ATTR_28_PREFIX = "Не задано значение обязательного атрибута 28"
 # Example in reason: "Отсутствует конфигурация для сезона с типом '25SS' и годом 'null'; ..."
-SEASON_QUOTE_RE = re.compile(
-    r"Отсутствует конфигурация для сезона с типом\s*'([^']+)'",
-    flags=re.IGNORECASE
-)
-ATTR_28_TOKEN_RE = re.compile(
-    r"не\s+задано\s+значение\s+обязательного\s+атрибута\s*28\s*:\s*['\"]?([^'\";\r\n]+?)['\"]?(?:;|$)",
-    flags=re.IGNORECASE,
-)
+SEASON_BLOCK_PATTERNS = [
+    re.compile(
+        r"Отсутствует\s+конфигурация\s+для\s+сезона\s+с\s+типом\s*(.+?)(?:\s+и\s+годом\b|;|$)",
+        flags=re.IGNORECASE,
+    ),
+    re.compile(
+        r"Не\s*задано\s*значение\s*обязательного\s*атрибута\s*28\s*:\s*(.+?)(?:;|$)",
+        flags=re.IGNORECASE,
+    ),
+]
+SEASON_FALLBACK_TOKEN_RE = re.compile(r"\b(?:\d{2}(?:SS|AW|FW)|(?:SS|AW|FW)\d{2})\b", flags=re.IGNORECASE)
+SEASON_CODE_PREFIX_YEAR_RE = re.compile(r"\b(FW|SS|AW|W|S)\s+(\d{2})\b", flags=re.IGNORECASE)
+SEASON_CODE_SUFFIX_YEAR_RE = re.compile(r"\b(\d{2})\s+(FW|SS|AW|W|S)\b", flags=re.IGNORECASE)
+SEASON_CODE_ONLY_RE = re.compile(r"^(?:FW|SS|AW|W|S)\d{2}$|^\d{2}(?:FW|SS|AW|W|S)$|^(?:FW|SS|AW|W|S)$", flags=re.IGNORECASE)
 
 OUTPUT_HEADERS = [
     "id",
@@ -70,21 +76,38 @@ def load_regex_mapping(mapping_xlsx: str) -> List[Tuple[re.Pattern, str]]:
 
 def extract_season_tokens_from_reason(reason: str) -> List[str]:
     """
-    Return tokens from:
-    - "...с типом 'X'"
-    - "Не задано значение обязательного атрибута 28: X"
+    Extract season tokens from the semantic block after "...с типом" or
+    from attribute 28 payload, then preserve the display form for expr.
     """
     if not reason:
         return []
     s = str(reason)
-    s_l = s.lower()
+    s_cf = s.casefold()
+    if not any(prefix.casefold() in s_cf for prefix in (NEEDLE_PREFIX, REQUIRED_ATTR_28_PREFIX)):
+        return []
+
+    def normalize_display_token(raw: str) -> str:
+        token = str(raw or "").strip()
+        token = token.replace("’", "'").replace("`", "'")
+        token = re.sub(r"\s+", " ", token).strip()
+        while token and token[0] in {"'", '"'}:
+            token = token[1:].strip()
+        while token and token[-1] in {"'", '"'}:
+            token = token[:-1].strip()
+        return token
 
     tokens: List[str] = []
-    if NEEDLE_PREFIX.lower() in s_l:
-        tokens.extend(m.group(1).strip() for m in SEASON_QUOTE_RE.finditer(s) if m.group(1).strip())
+    for pat in SEASON_BLOCK_PATTERNS:
+        for m in pat.finditer(s):
+            token = normalize_display_token(m.group(1))
+            if token:
+                tokens.append(token)
 
-    if REQUIRED_ATTR_28_PREFIX.lower() in s_l:
-        tokens.extend(m.group(1).strip() for m in ATTR_28_TOKEN_RE.finditer(s) if m.group(1).strip())
+    if not tokens:
+        for m in SEASON_FALLBACK_TOKEN_RE.finditer(s):
+            token = normalize_display_token(m.group(0))
+            if token:
+                tokens.append(token)
 
     # De-duplicate while preserving order.
     seen = set()
@@ -97,6 +120,18 @@ def extract_season_tokens_from_reason(reason: str) -> List[str]:
         unique_tokens.append(token)
 
     return unique_tokens
+
+
+def normalize_lookup_token(token: str) -> str:
+    value = str(token or "").strip()
+    value = value.replace("’", "'").replace("`", "'")
+    value = re.sub(r"[\"']+", "", value)
+    value = re.sub(r"\s+", " ", value).strip()
+    value = SEASON_CODE_PREFIX_YEAR_RE.sub(lambda m: f"{m.group(1).upper()}{m.group(2)}", value)
+    value = SEASON_CODE_SUFFIX_YEAR_RE.sub(lambda m: f"{m.group(1)}{m.group(2).upper()}", value)
+    if SEASON_CODE_ONLY_RE.fullmatch(value):
+        return value.upper()
+    return value
 
 
 def map_by_reference(token: str, ref: List[Tuple[re.Pattern, str]]) -> Optional[str]:
@@ -169,6 +204,10 @@ def _sheet_key(name: str) -> str:
     return "".join(str(name or "").split()).casefold()
 
 
+def normalize_reason_key(reason: Optional[str]) -> str:
+    return " ".join(str(reason or "").split()).casefold()
+
+
 def resolve_input_sheet_name(sheet_names: List[str], preferred_sheet: Optional[str] = "Result 1") -> str:
     if not sheet_names:
         raise ValueError("Во входном файле нет листов.")
@@ -219,6 +258,7 @@ def build_records_from_input(ws, header_map, ref_map, index_start: int, email: s
     errors = []
 
     seen_pairs = set()  # (expr, outputValue) to avoid duplicates if needed
+    seen_reason_keys = set()
     row_id = 1
     index_num = index_start
 
@@ -229,14 +269,20 @@ def build_records_from_input(ws, header_map, ref_map, index_start: int, email: s
         reason = ws.cell(r, reason_col).value
         storecode = ws.cell(r, storecode_col).value
 
+        reason_key = normalize_reason_key("" if reason is None else str(reason))
+        if not reason_key or reason_key in seen_reason_keys:
+            continue
+        seen_reason_keys.add(reason_key)
+
         tokens = extract_season_tokens_from_reason("" if reason is None else str(reason))
         if not tokens:
             continue
 
         for token in tokens:
-            outv = map_by_reference(token, ref_map)
+            lookup_token = normalize_lookup_token(token)
+            outv = map_by_reference(lookup_token, ref_map)
             if outv is None and use_llm:
-                outv = map_by_llm(token, model=llm_model)
+                outv = map_by_llm(lookup_token, model=llm_model)
 
             if outv is None:
                 errors.append((storecode, token, reason))

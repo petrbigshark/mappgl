@@ -125,20 +125,34 @@ def infer_denim_size_error_reason_label(reason: Any, category: Any, parentcatego
     text = normalize_space(reason)
     low = text.casefold()
     cat = normalize_space(category).casefold()
-    _parent = normalize_space(parentcategory).casefold()
+    has_jeans_in_category = any(m in cat for m in ("джинс", "jeans"))
 
-    if re.search(r"не найден размер\s*'[^']*/[^']*'", text, flags=re.IGNORECASE):
+    if has_jeans_in_category and re.search(r"не найден размер\s*'[^']*/[^']*'", text, flags=re.IGNORECASE):
         return DENIM_SLASH_LABEL
 
     if "не найден тип размера" not in low:
         return None
 
-    has_jeans = any(m in low for m in ("джинс", "jeans")) or any(m in cat for m in ("джинс", "jeans"))
+    has_default_size_20_33 = False
+    for m in re.finditer(
+        r"вместо\s+размера\s*['\"]\s*(\d{1,2})\s*['\"]\s*выставлен\s+размер\s+по\s+умолчанию",
+        text,
+        flags=re.IGNORECASE,
+    ):
+        try:
+            size_num = int(m.group(1))
+        except Exception:
+            continue
+        if 20 <= size_num <= 33:
+            has_default_size_20_33 = True
+            break
+    if not has_default_size_20_33:
+        return None
 
     has_pants = any(m in low for m in ("брюк", "брюки", "pantaloni", "pants", "trousers")) or any(
         m in cat for m in ("брюк", "брюки", "pantaloni", "pants", "trousers")
     )
-    if has_pants and not has_jeans:
+    if has_pants:
         return DENIM_PANTS_LABEL
 
     has_skirts = any(m in low for m in ("юбк", "gonne", "skirt")) or any(m in cat for m in ("юбк", "gonne", "skirt"))

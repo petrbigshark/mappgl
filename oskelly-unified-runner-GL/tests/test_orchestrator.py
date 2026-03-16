@@ -213,3 +213,33 @@ def test_run_pipeline_continues_when_one_module_fails(tmp_path: Path, monkeypatc
     assert result["modules"]["brand"]["duration_sec"] is not None
     assert result["modules"]["color"]["duration_sec"] is not None
     assert Path(result["report_file"]).exists()
+
+
+def test_match_category_rows_excludes_bambina_for_reason_a() -> None:
+    cfg = orchestrator.load_yaml(orchestrator.MODULE_DIRS["category"] / "config.yml")
+    reason_a = cfg["filters"]["reasons"][0]
+
+    df = pd.DataFrame(
+        {
+            orchestrator.ROW_ID_COL: [1, 2],
+            "reason": [reason_a, reason_a],
+            "category": ["Any", "Any"],
+            "parentcategory": ["Bambina", "Donna"],
+        }
+    )
+    assert orchestrator.match_category_rows(df) == [2]
+
+
+def test_match_category_rows_handles_nan_reason_without_crash() -> None:
+    cfg = orchestrator.load_yaml(orchestrator.MODULE_DIRS["category"] / "config.yml")
+    reason_a = cfg["filters"]["reasons"][0]
+
+    df = pd.DataFrame(
+        {
+            orchestrator.ROW_ID_COL: [1, 2],
+            "reason": [float("nan"), reason_a],
+            "category": ["Any", "Any"],
+            "parentcategory": ["Donna", "Donna"],
+        }
+    )
+    assert orchestrator.match_category_rows(df) == [2]

@@ -357,9 +357,10 @@ def match_category_rows(df: pd.DataFrame) -> List[int]:
     skirts_markers = filters.get("skirts_category_markers", [])
 
     tmp = df.copy()
-    tmp["_reason"] = tmp[reason_col].astype(str)
-    tmp["_cat"] = tmp[cat_col].astype(str)
-    tmp["_parent"] = tmp[parent_col].astype(str)
+    # Normalize through helper to avoid NaN/float values breaking "in" checks.
+    tmp["_reason"] = tmp[reason_col].map(normalize_text)
+    tmp["_cat"] = tmp[cat_col].map(normalize_text)
+    tmp["_parent"] = tmp[parent_col].map(normalize_text)
 
     mask_brand_excluded = tmp["_reason"].map(
         lambda s: any(normalize_text(s).startswith(str(p)) for p in brand_exclude_prefixes)

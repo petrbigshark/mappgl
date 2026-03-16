@@ -24,6 +24,8 @@ filters:
 
   # Детские значения (исключаем, даже если внутри есть men/women маркеры)
   exclude_parent_markers:
+    - "Bambino"
+    - "Bambina"
     - "Kids"
     - "Boy"
     - "Girl"

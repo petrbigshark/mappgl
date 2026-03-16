@@ -33,6 +33,7 @@ from rapidfuzz import fuzz, process
 
 
 PHRASE_NOT_FOUND = "Не найден бренд с названием"
+RESULT_COLUMNS = ["incoming", "mapped_to", "status", "rule", "score"]
 
 # --- Overrides (extend as you learn) ---
 SPECIAL_MAP = {
@@ -410,7 +411,7 @@ def main():
     results = []
     for b in unique_incoming:
         results.append(map_rules_only(b, name_to_id, norm_to_ref, ref_choices_norm))
-    results_df = pd.DataFrame(results)
+    results_df = pd.DataFrame(results, columns=RESULT_COLUMNS)
 
     # pass 2: LLM fallback for unmapped (safe)
     if args.use_llm:

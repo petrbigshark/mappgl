@@ -14,7 +14,7 @@ filters:
   reasons:
     - "Не найдена категория с названием"
     - "Для категории 'Юбки миди' не найден тип размера"
-  kids_parent_markers: ["Bambino","Kids","Kid","Boy","Girl","Junior","Children","Child","Teen"]
+  kids_parent_markers: ["Bambino","Bambina","Kids","Kid","Boy","Girl","Junior","Children","Child","Teen"]
   skirts_category_markers: ["юбк","skirt","skirts","gonna","gonne","jupe","falda","saia","rock"]
 
 grouping:
@@ -47,7 +47,7 @@ desc_reduction:
 llm:
   model: "gpt-5-mini"
   max_items_per_request: 60
-  request_timeout_sec: 120
+  request_timeout_sec: 200
   prompt_version: "catmap-v4-full-dict"
 
 output:

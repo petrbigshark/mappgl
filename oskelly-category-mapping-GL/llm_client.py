@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from openai import OpenAI
@@ -19,6 +20,7 @@ class LLMConfig:
     max_items_per_request: int
     request_timeout_sec: int
     prompt_version: str
+    debug_log_path: Optional[str] = None
 
 
 @dataclass
@@ -42,6 +44,15 @@ class ResponsesFullDictMapper:
     def __init__(self, cfg: LLMConfig):
         self.cfg = cfg
         self.client = OpenAI()
+        self.debug_log_path = Path(cfg.debug_log_path) if cfg.debug_log_path else None
+        if self.debug_log_path:
+            self.debug_log_path.parent.mkdir(parents=True, exist_ok=True)
+
+    def _write_debug(self, payload: Dict[str, Any]) -> None:
+        if not self.debug_log_path:
+            return
+        with self.debug_log_path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
     def _build_prompt(self, candidates_by_group: Dict[str, List[str]], items: List[Dict[str, Any]]) -> str:
         """
@@ -69,21 +80,48 @@ Rules:
         }
         return rules.strip() + "\n\n" + json.dumps(payload, ensure_ascii=False)
 
-    def map(self, candidates_by_group: Dict[str, List[str]], items: List[Dict[str, Any]]) -> List[LLMResult]:
+    def map(
+        self,
+        candidates_by_group: Dict[str, List[str]],
+        items: List[Dict[str, Any]],
+        debug_context: Optional[Dict[str, Any]] = None,
+    ) -> List[LLMResult]:
         if not items:
             return []
+
+        prompt = self._build_prompt(candidates_by_group, items)
+        involved_groups = sorted({str(it.get("group", "")) for it in items if it.get("group")})
+        debug_base = {
+            "stage": (debug_context or {}).get("stage"),
+            "chunk_index": (debug_context or {}).get("chunk_index"),
+            "chunk_total": (debug_context or {}).get("chunk_total"),
+            "payload_items_total": (debug_context or {}).get("payload_items_total"),
+            "chunk_item_count": len(items),
+            "cache_hits_before_stage": (debug_context or {}).get("cache_hits_before_stage"),
+            "group": (debug_context or {}).get("group"),
+            "anchor": (debug_context or {}).get("anchor"),
+            "override_candidates": (debug_context or {}).get("override_candidates"),
+            "groups_in_chunk": involved_groups,
+            "candidate_counts": {g: len(candidates_by_group.get(g, [])) for g in involved_groups},
+            "sample_keys": [str(it.get("key", "")) for it in items[:5]],
+            "model": self.cfg.model,
+            "request_timeout_sec": self.cfg.request_timeout_sec,
+            "prompt_version": self.cfg.prompt_version,
+            "prompt_chars": len(prompt),
+        }
 
         # retry w/ backoff
         last_err: Optional[Exception] = None
         for attempt in range(1, 4):
+            started_at = time.time()
+            text = ""
             try:
-                prompt = self._build_prompt(candidates_by_group, items)
                 resp = self.client.responses.create(
                     model=self.cfg.model,
                     input=prompt,
                     timeout=self.cfg.request_timeout_sec,
                 )
-                text = resp.output_text
+                text = resp.output_text or ""
                 data = json.loads(text)
                 if not isinstance(data, list):
                     raise LLMError(f"Expected JSON list, got {type(data)}")
@@ -107,9 +145,29 @@ Rules:
                 missing = [it["key"] for it in items if it["key"] not in got]
                 if missing:
                     raise LLMError(f"Missing keys in response: {missing[:5]} (and {len(missing)-5} more)" if len(missing)>5 else f"Missing keys in response: {missing}")
+                self._write_debug(
+                    {
+                        **debug_base,
+                        "event": "success",
+                        "attempt": attempt,
+                        "duration_sec": round(time.time() - started_at, 3),
+                        "response_chars": len(text),
+                    }
+                )
                 return out
             except Exception as e:
                 last_err = e
+                self._write_debug(
+                    {
+                        **debug_base,
+                        "event": "error",
+                        "attempt": attempt,
+                        "duration_sec": round(time.time() - started_at, 3),
+                        "error_type": type(e).__name__,
+                        "error": str(e),
+                        "response_preview": text[:500] if text else "",
+                    }
+                )
                 time.sleep(0.7 * attempt)
 
         raise LLMError(f"Responses API call failed after retries: {last_err}")
