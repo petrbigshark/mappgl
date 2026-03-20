@@ -86,7 +86,14 @@ def detect_group(parentcategory: str, cfg: Dict[str, Any]) -> str:
     gcfg = cfg["grouping"]
 
     def any_marker(markers: List[str]) -> bool:
-        return any(m.casefold() in s for m in markers)
+        for marker in markers:
+            marker_n = normalize_space(marker).casefold()
+            if not marker_n:
+                continue
+            pattern = r"(?<!\w)" + r"\s+".join(re.escape(part) for part in marker_n.split()) + r"(?!\w)"
+            if re.search(pattern, s):
+                return True
+        return False
 
     if any_marker(gcfg["lifestyle_markers"]):
         return "LIFESTYLE"
