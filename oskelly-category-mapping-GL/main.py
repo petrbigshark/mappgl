@@ -9,7 +9,7 @@ import sys
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import pandas as pd
 import yaml
@@ -181,6 +181,210 @@ def reduce_description(description: str, full_path: str, output_value: str, cfg:
     return " ".join([tokens[i] for i in keep_idx])
 
 
+DEFAULT_DESC_EXTRACT_STOP_MARKERS = [
+    " composed of ",
+    " characterized by ",
+    " characterised by ",
+    " featuring ",
+    " made of ",
+    " crafted from ",
+    " produced from ",
+    " from ",
+    " with ",
+    " in ",
+    " by ",
+]
+
+DEFAULT_DESC_EXTRACT_PHRASES = [
+    "hand and shoulder bag",
+    "one-piece swimsuit",
+    "two-piece swimsuit",
+    "two-piece set",
+    "crossbody bag",
+    "changing bag",
+    "shopping bag",
+    "shoulder bag",
+    "crew neck sweatshirt",
+    "crewneck sweatshirt",
+    "crew neck dress",
+    "crewneck dress",
+    "crew neck sweater",
+    "crewneck sweater",
+    "low-top sneakers",
+    "low-top sneaker",
+    "low sneakers",
+    "low sneaker",
+    "high-top sneakers",
+    "high-top sneaker",
+    "swim shorts",
+    "tote bag",
+    "slides",
+    "slide",
+    "sneakers",
+    "sneaker",
+    "trainers",
+    "trainer",
+    "sandals",
+    "sandal",
+    "ballerinas",
+    "ballerina",
+    "espadrilles",
+    "moccasins",
+    "moccasin",
+    "loafer",
+    "loafers",
+    "slippers",
+    "slipper",
+    "swimsuit",
+    "swimwear",
+    "bikini",
+    "boots",
+    "boot",
+    "dress",
+    "shirt",
+    "blouse",
+    "bodysuit",
+    "romper",
+    "onesie",
+    "leggings",
+    "joggers",
+    "jacket",
+    "shorts",
+    "jeans",
+    "skirt",
+    "scarf",
+    "gloves",
+    "mittens",
+    "beanie",
+    "hat",
+    "cap",
+    "bag",
+    "set",
+    "outfit",
+]
+
+DESC_EXTRACT_CONNECTORS = {"and", "&", "de", "di", "da", "du", "of", "the", "a", "an"}
+
+TOKEN_RE = re.compile(r"[0-9A-Za-zÀ-ÖØ-öø-ÿА-Яа-яЁё]+(?:[-'][0-9A-Za-zÀ-ÖØ-öø-ÿА-Яа-яЁё]+)*")
+
+
+def description_headline(description: str) -> str:
+    text = str(description or "").replace("\r", "\n")
+    parts = [p.strip() for p in text.split("\n") if p and p.strip()]
+    if not parts:
+        return ""
+    return normalize_space(parts[0].split("•", 1)[0])
+
+
+def load_description_phrase_dict(path: Path) -> List[str]:
+    if not path.exists():
+        return []
+    phrases: List[str] = []
+    with path.open("r", encoding="utf-8") as f:
+        for raw in f:
+            line = normalize_space(raw)
+            if not line or line.startswith("#"):
+                continue
+            phrases.append(line)
+    return phrases
+
+
+def description_phrase_patterns(cfg: Dict[str, Any]) -> List[Tuple[re.Pattern[str], str]]:
+    section = cfg.get("description_extraction", {})
+    phrases = list(DEFAULT_DESC_EXTRACT_PHRASES)
+    dict_path = normalize_space(section.get("phrase_dict", ""))
+    if dict_path:
+        phrases.extend(load_description_phrase_dict(Path(dict_path)))
+    phrases.extend(section.get("extra_phrases", []) or [])
+
+    seen = set()
+    out: List[Tuple[re.Pattern[str], str]] = []
+    for phrase in sorted(
+        phrases,
+        key=lambda x: (-len(normalize_space(str(x)).split(" ")), -len(normalize_space(str(x)))),
+    ):
+        value = normalize_space(str(phrase))
+        if not value:
+            continue
+        key = norm_key_for_lookup(value)
+        if key in seen:
+            continue
+        seen.add(key)
+        pattern = r"(?<!\w)" + r"\s+".join(re.escape(part) for part in value.split()) + r"(?!\w)"
+        out.append((re.compile(pattern, flags=re.IGNORECASE), value))
+    return out
+
+
+def probable_brand_token(token: str) -> bool:
+    if not token:
+        return False
+    letters = [ch for ch in token if ch.isalpha()]
+    if not letters:
+        return False
+    return letters[0].isupper() and token.casefold() not in DESC_EXTRACT_CONNECTORS
+
+
+def fallback_description_fragment(headline: str, cfg: Dict[str, Any]) -> str:
+    section = cfg.get("description_extraction", {})
+    markers = section.get("stop_markers") or DEFAULT_DESC_EXTRACT_STOP_MARKERS
+    headline_n = f" {normalize_space(headline)} "
+    cut = len(headline_n)
+    for marker in markers:
+        marker_base = normalize_space(str(marker)).casefold()
+        if not marker_base:
+            continue
+        marker_n = f" {marker_base} "
+        hit = headline_n.casefold().find(marker_n)
+        if hit != -1:
+            cut = min(cut, hit)
+    prefix = normalize_space(headline_n[:cut])
+    if not prefix:
+        prefix = normalize_space(headline)
+    tokens = [m.group(0) for m in TOKEN_RE.finditer(prefix)]
+    if not tokens:
+        return ""
+
+    tail: List[str] = []
+    for token in reversed(tokens):
+        if tail and probable_brand_token(token):
+            break
+        if probable_brand_token(token) and not tail:
+            break
+        tail.append(token)
+    if not tail:
+        tail = [tokens[-1]]
+
+    fragment_tokens = list(reversed(tail))
+    while fragment_tokens and norm_key_for_lookup(fragment_tokens[0]) in DESC_EXTRACT_CONNECTORS:
+        fragment_tokens.pop(0)
+    if not fragment_tokens:
+        return ""
+
+    max_tail_words = int(section.get("max_tail_words", 4))
+    if max_tail_words > 0 and len(fragment_tokens) > max_tail_words:
+        fragment_tokens = fragment_tokens[-max_tail_words:]
+    return normalize_space(" ".join(fragment_tokens))
+
+
+def extract_description_fragment(
+    description: str,
+    cfg: Dict[str, Any],
+    phrase_patterns: Sequence[Tuple[re.Pattern[str], str]],
+) -> str:
+    section = cfg.get("description_extraction", {})
+    if not section.get("enabled", True):
+        return ""
+    headline = description_headline(description)
+    if not headline:
+        return ""
+
+    for pattern, _phrase in phrase_patterns:
+        hit = pattern.search(headline)
+        if hit:
+            return normalize_space(hit.group(0))
+    return fallback_description_fragment(headline, cfg)
+
+
 @dataclass(frozen=True)
 class DictRow:
     oskelly_id: int
@@ -283,6 +487,7 @@ def main() -> None:
         "dedup": {},
         "errors": [],
     }
+    desc_phrase_patterns = description_phrase_patterns(cfg)
 
     category_rows = load_category_dict(Path(cfg["dictionaries"]["category_xlsx"]))
     parent_params = load_parentcategory_dict(Path(cfg["dictionaries"]["parentcategory_xlsx"]))
@@ -376,6 +581,8 @@ def main() -> None:
     df["_group"] = df[c_parent].astype(str).apply(lambda x: detect_group(x, cfg))
     df["expr"] = df[c_cat].astype(str).map(normalize_space)
     df["description"] = df[c_desc].astype(str).map(normalize_space)
+    df["_desc_fragment"] = df["description"].apply(lambda value: extract_description_fragment(value, cfg, desc_phrase_patterns))
+    df["_desc_for_llm"] = df["_desc_fragment"].where(df["_desc_fragment"].astype(str).str.strip().ne(""), df["description"])
 
     report["counts"]["input_rows"] = int(len(df_in))
     report["counts"]["rows_after_filters"] = int(len(df))
@@ -480,33 +687,47 @@ def main() -> None:
     report["llm"]["debug_log_file"] = str(run_dir / "llm_debug.jsonl")
     print(f"LLM debug log: {run_dir / 'llm_debug.jsonl'}")
 
+    def make_llm_item(
+        group: str,
+        expr: str,
+        text: str,
+        used_desc: bool,
+        match_kind: str,
+        desc_value: str = "",
+        anchor_hint: str = "",
+    ) -> Dict[str, Any]:
+        payload = {
+            "group": normalize_space(group),
+            "expr": normalize_space(expr),
+            "text": normalize_space(text),
+            "match_kind": normalize_space(match_kind),
+            "desc_value": normalize_space(desc_value),
+            "anchor_hint": normalize_space(anchor_hint),
+        }
+        return {
+            **payload,
+            "payload_key": sha1_text(json.dumps(payload, ensure_ascii=False, sort_keys=True)),
+            "used_desc": bool(used_desc),
+        }
+
     def run_items(
-        items_meta: List[Tuple[str, str, str, bool]],
+        items_meta: List[Dict[str, Any]],
         stage: str,
         candidates_override: Optional[Dict[str, List[str]]] = None,
         stage_meta: Optional[Dict[str, Any]] = None,
-    ) -> Dict[Tuple[str, str], str]:
-        """
-        items_meta: list of (group, expr, text, used_desc_flag)
-        returns (group, expr) -> chosen full_path
-        """
+    ) -> Dict[str, str]:
         if not items_meta:
             return {}
 
-        # Dedup by (group, expr, text)
-        uniq = {}
-        for g, expr, text, used_desc in items_meta:
-            uniq[(g, expr, text)] = used_desc
-        report_key = "unique_items"
-        # Build payload for missing cache
+        uniq = {item["payload_key"]: dict(item) for item in items_meta}
         payload = []
         meta = []
-        for (g, expr, text), used_desc in uniq.items():
-            ck = cache_key(g, text, llm_cfg.prompt_version, llm_cfg.model)
+        for item in uniq.values():
+            ck = cache_key(item["group"], item["text"], llm_cfg.prompt_version, llm_cfg.model)
             if ck in cache:
                 continue
-            payload.append({"key": f"{g}||{expr}", "group": g, "text": text})
-            meta.append((ck, g, expr, text, used_desc))
+            payload.append({"key": item["payload_key"], "group": item["group"], "text": item["text"]})
+            meta.append((ck, item["payload_key"], item["group"], item["expr"], item["text"], item["used_desc"]))
 
         if payload and args.dry_run:
             return {}
@@ -536,36 +757,35 @@ def main() -> None:
 
             by_key = {r.key: r.full_path for r in results_all}
             with cache_path.open("a", encoding="utf-8") as f:
-                for ck, g, expr, text, used_desc in meta:
-                    k = f"{g}||{expr}"
-                    fp = by_key.get(k, "")
+                for ck, payload_key, group, expr, text, used_desc in meta:
+                    fp = by_key.get(payload_key, "")
                     if fp:
                         cache[ck] = fp
-                        f.write(json.dumps({"cache_key": ck, "group": g, "expr": expr, "text": text,
+                        f.write(json.dumps({"cache_key": ck, "payload_key": payload_key, "group": group, "expr": expr, "text": text,
                                             "full_path": fp, "prompt_version": llm_cfg.prompt_version,
                                             "model": llm_cfg.model, "used_desc": used_desc},
                                            ensure_ascii=False) + "\n")
 
         out = {}
-        # Combine cached + new
-        for (g, expr, text), used_desc in uniq.items():
-            ck = cache_key(g, text, llm_cfg.prompt_version, llm_cfg.model)
+        for item in uniq.values():
+            ck = cache_key(item["group"], item["text"], llm_cfg.prompt_version, llm_cfg.model)
             if ck in cache:
-                out[(g, expr)] = cache[ck]
+                out[item["payload_key"]] = cache[ck]
         return out
 
     # Stage 1: category-only unless force-desc
     items_stage1 = []
     items_force = []
     for _, r in need_llm.iterrows():
-        g, expr, desc = r["_group"], r["expr"], r["description"]
+        g, expr = r["_group"], r["expr"]
+        desc_for_llm = normalize_space(r.get("_desc_for_llm", ""))
         if contains_any(expr, force_desc_markers):
-            items_force.append((g, expr, f"{expr} | {desc}".strip(), True))
+            items_force.append(make_llm_item(g, expr, f"{expr} | {desc_for_llm}".strip(), True, "desc", desc_value=desc_for_llm))
         else:
-            items_stage1.append((g, expr, expr, False))
+            items_stage1.append(make_llm_item(g, expr, expr, False, "expr"))
 
-    report["llm"]["unique_stage1"] = len({(g, e, t) for g, e, t, _ in items_stage1})
-    report["llm"]["unique_force_desc"] = len({(g, e, t) for g, e, t, _ in items_force})
+    report["llm"]["unique_stage1"] = len({item["payload_key"] for item in items_stage1})
+    report["llm"]["unique_force_desc"] = len({item["payload_key"] for item in items_force})
 
     fp_stage1 = run_items(items_stage1, stage="stage1")
     fp_force = run_items(items_force, stage="force_desc")
@@ -574,16 +794,19 @@ def main() -> None:
     # we narrow candidates to only those paths that contain that anchor segment.
     df_anchor = df[(df["_needs_anchor_llm"] == True)].copy()
     report["llm"]["rows_anchor_llm"] = int(len(df_anchor))
-    anchor_maps: List[Dict[Tuple[str,str], str]] = []
+    anchor_maps: List[Dict[str, str]] = []
+    anchor_items: List[Dict[str, Any]] = []
     if len(df_anchor):
         # group items by (group, anchor)
-        buckets: Dict[Tuple[str,str], List[Tuple[str,str,str,bool]]] = {}
+        buckets: Dict[Tuple[str, str], List[Dict[str, Any]]] = {}
         for _, r in df_anchor.iterrows():
             g = r["_group"]
             expr = r["expr"]
             anchor = r.get("_seed_anchor", "")
             text = f"{expr} ANCHOR:{anchor}" if anchor else expr
-            buckets.setdefault((g, anchor), []).append((g, expr, text, False))
+            item = make_llm_item(g, expr, text, False, "anchor", anchor_hint=anchor)
+            buckets.setdefault((g, anchor), []).append(item)
+            anchor_items.append(item)
         for (g, anchor), items in buckets.items():
             sub = find_anchor_candidates(g, anchor)
             cand_override = {"WOMEN": candidates_by_group["WOMEN"], "MEN": candidates_by_group["MEN"], "LIFESTYLE": candidates_by_group["LIFESTYLE"]}
@@ -604,21 +827,31 @@ def main() -> None:
     for m in anchor_maps:
         fp_anchor.update(m)
 
-    def apply_fp(fp_map: Dict[Tuple[str, str], str], used_desc_flag: bool):
-        for (g, expr), fp in fp_map.items():
-            rec = fp_lookup.get((g, fp))
+    def apply_fp(fp_map: Dict[str, str], items_meta: List[Dict[str, Any]], used_desc_flag: bool):
+        uniq_items = {item["payload_key"]: item for item in items_meta}
+        for item in uniq_items.values():
+            fp = fp_map.get(item["payload_key"], "")
+            if not fp:
+                continue
+            rec = fp_lookup.get((item["group"], fp))
             if not rec:
-                die(f"Internal: full path not found for group={g}: {fp}")
-            mask = (df["_group"] == g) & (df["expr"] == expr) & (~df["_use_seed"])
+                die(f"Internal: full path not found for group={item['group']}: {fp}")
+            mask = (df["_group"] == item["group"]) & (df["expr"] == item["expr"]) & (~df["_use_seed"])
+            if item["match_kind"] == "desc":
+                mask = mask & (df["_desc_for_llm"].fillna("").map(normalize_space) == item["desc_value"])
+            elif item["match_kind"] == "anchor":
+                mask = mask & (df["_seed_anchor"].fillna("").map(normalize_space) == item["anchor_hint"])
+            else:
+                mask = mask & (~df["expr"].astype(str).apply(lambda x: contains_any(x, force_desc_markers)))
             df.loc[mask, "_full_path"] = rec.full_path
             df.loc[mask, "_outputValue"] = rec.output_value
             df.loc[mask, "_oskellyId"] = rec.oskelly_id
             df.loc[mask, "_used_desc"] = used_desc_flag
 
-    apply_fp(fp_stage1, False)
-    apply_fp(fp_force, True)
+    apply_fp(fp_stage1, items_stage1, False)
+    apply_fp(fp_force, items_force, True)
     if 'fp_anchor' in locals():
-        apply_fp(fp_anchor, False)
+        apply_fp(fp_anchor, anchor_items, False)
 
     # Depth fallback for those not using desc yet
     need_fb = df[(~df["_use_seed"]) & (df["_used_desc"] == False)].copy()
@@ -627,19 +860,24 @@ def main() -> None:
 
     items_fb = []
     for _, r in need_fb.iterrows():
-        g, expr, desc = r["_group"], r["expr"], r["description"]
-        items_fb.append((g, expr, f"{expr} | {desc}".strip(), True))
+        g, expr = r["_group"], r["expr"]
+        desc_for_llm = normalize_space(r.get("_desc_for_llm", ""))
+        items_fb.append(make_llm_item(g, expr, f"{expr} | {desc_for_llm}".strip(), True, "desc", desc_value=desc_for_llm))
 
     fp_fb = run_items(items_fb, stage="depth_fallback")
-    apply_fp(fp_fb, True)
+    apply_fp(fp_fb, items_fb, True)
 
     # params with descContains if used desc
     def build_params(row) -> str:
         base = dict(row["_base_params"]) if isinstance(row["_base_params"], dict) else {"parents": []}
         if bool(row.get("_used_desc", False)):
-            rd = reduce_description(row["description"], str(row["_full_path"]), str(row["_outputValue"]), cfg)
-            if rd:
-                base["descContains"] = rd
+            extracted = normalize_space(row.get("_desc_fragment", ""))
+            if extracted:
+                base["descContains"] = extracted
+            else:
+                rd = reduce_description(row["description"], str(row["_full_path"]), str(row["_outputValue"]), cfg)
+                if rd:
+                    base["descContains"] = rd
         return json.dumps(base, ensure_ascii=False, separators=(",", ":"))
 
     df["params"] = df.apply(build_params, axis=1)
