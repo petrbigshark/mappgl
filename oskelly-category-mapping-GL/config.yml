@@ -44,24 +44,6 @@ desc_reduction:
   token_score_threshold: 78
   max_tokens: 6
 
-description_extraction:
-  enabled: true
-  phrase_dict: "data/description_fragments.txt"
-  stop_markers:
-    - "composed of"
-    - "characterized by"
-    - "characterised by"
-    - "featuring"
-    - "made of"
-    - "crafted from"
-    - "produced from"
-    - "from"
-    - "with"
-    - "in"
-    - "by"
-  max_tail_words: 4
-  extra_phrases: []
-
 llm:
   model: "gpt-5-mini"
   max_items_per_request: 60
