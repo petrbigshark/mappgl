@@ -93,3 +93,34 @@ def test_debug_log_writes_each_retry_error(tmp_path: Path, monkeypatch) -> None:
     assert all(line["event"] == "error" for line in lines)
     assert all(line["stage"] == "force_desc" for line in lines)
     assert all("Request timed out" in line["error"] for line in lines)
+
+
+def test_progress_log_prints_chunk_completion(tmp_path: Path, monkeypatch, capsys) -> None:
+    debug_path = tmp_path / "llm_debug.jsonl"
+    items = [{"key": f"WOMEN||Dress{i}", "group": "WOMEN", "text": f"Dress {i}"} for i in range(60)]
+    response = json.dumps([{"key": item["key"], "choice_index": 0} for item in items], ensure_ascii=False)
+    monkeypatch.setattr(
+        llm_client,
+        "OpenAI",
+        lambda: _StubClient([response]),
+    )
+
+    mapper = llm_client.ResponsesFullDictMapper(
+        llm_client.LLMConfig(
+            model="gpt-5-mini",
+            max_items_per_request=60,
+            request_timeout_sec=120,
+            prompt_version="test",
+            debug_log_path=str(debug_path),
+        )
+    )
+
+    mapper.map(
+        {"WOMEN": ["Женское / Одежда / Платья"]},
+        items,
+        debug_context={"stage": "force_desc", "chunk_index": 2, "chunk_total": 4, "payload_items_total": 240},
+    )
+
+    out = capsys.readouterr().out
+    assert "[force_desc] chunk 2/4" in out
+    assert "120/240" in out

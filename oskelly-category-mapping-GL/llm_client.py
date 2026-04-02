@@ -54,6 +54,43 @@ class ResponsesFullDictMapper:
         with self.debug_log_path.open("a", encoding="utf-8") as f:
             f.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
+    def _print_progress(
+        self,
+        debug_base: Dict[str, Any],
+        *,
+        event: str,
+        attempt: int,
+        duration_sec: float,
+        error: str = "",
+    ) -> None:
+        stage = str(debug_base.get("stage") or "llm")
+        chunk_index = debug_base.get("chunk_index")
+        chunk_total = debug_base.get("chunk_total")
+        payload_total = debug_base.get("payload_items_total")
+        chunk_item_count = int(debug_base.get("chunk_item_count") or 0)
+
+        if not isinstance(chunk_index, int) or not isinstance(chunk_total, int) or not isinstance(payload_total, int):
+            return
+
+        processed_total = min(
+            payload_total,
+            max(0, (chunk_index - 1) * self.cfg.max_items_per_request) + chunk_item_count,
+        )
+        prefix = f"[{stage}] chunk {chunk_index}/{chunk_total}"
+        if event == "success":
+            print(
+                f"{prefix} обработано {processed_total}/{payload_total} товаров "
+                f"(attempt {attempt}, {duration_sec:.3f}s)",
+                flush=True,
+            )
+            return
+
+        if error:
+            print(
+                f"{prefix} ошибка на попытке {attempt}: {error}",
+                flush=True,
+            )
+
     def _build_prompt(self, candidates_by_group: Dict[str, List[str]], items: List[Dict[str, Any]]) -> str:
         """
         candidates_by_group:
@@ -145,28 +182,43 @@ Rules:
                 missing = [it["key"] for it in items if it["key"] not in got]
                 if missing:
                     raise LLMError(f"Missing keys in response: {missing[:5]} (and {len(missing)-5} more)" if len(missing)>5 else f"Missing keys in response: {missing}")
+                duration_sec = time.time() - started_at
                 self._write_debug(
                     {
                         **debug_base,
                         "event": "success",
                         "attempt": attempt,
-                        "duration_sec": round(time.time() - started_at, 3),
+                        "duration_sec": round(duration_sec, 3),
                         "response_chars": len(text),
                     }
+                )
+                self._print_progress(
+                    debug_base,
+                    event="success",
+                    attempt=attempt,
+                    duration_sec=duration_sec,
                 )
                 return out
             except Exception as e:
                 last_err = e
+                duration_sec = time.time() - started_at
                 self._write_debug(
                     {
                         **debug_base,
                         "event": "error",
                         "attempt": attempt,
-                        "duration_sec": round(time.time() - started_at, 3),
+                        "duration_sec": round(duration_sec, 3),
                         "error_type": type(e).__name__,
                         "error": str(e),
                         "response_preview": text[:500] if text else "",
                     }
+                )
+                self._print_progress(
+                    debug_base,
+                    event="error",
+                    attempt=attempt,
+                    duration_sec=duration_sec,
+                    error=str(e),
                 )
                 time.sleep(0.7 * attempt)
 
